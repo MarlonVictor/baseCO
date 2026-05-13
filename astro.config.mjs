@@ -26,7 +26,7 @@ export default defineConfig({
 
   vite: {
     build: {
-      cssMinify: 'lightningcss',
+      cssMinify: 'esbuild',
     },
   },
 });

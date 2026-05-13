@@ -17,6 +17,8 @@
 
 export interface ContactInfo {
   phone?: string;
+  /** Número exibido; link usa https://wa.me/{apenas dígitos} */
+  whatsapp?: string;
   email?: string;
   address?: string;
   hours?: string;
@@ -144,6 +146,19 @@ const {
 
       <aside class="contact__info" aria-label="Outras formas de contato">
         <ul class="flex flex-col gap-5">
+          {info.whatsapp && (
+            <li class="contact__info-item">
+              <span class="contact__info-label block text-sm font-medium">WhatsApp</span>
+              <a
+                href={`https://wa.me/${info.whatsapp.replace(/\D/g, '')}`}
+                class="contact__info-value block"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {info.whatsapp}
+              </a>
+            </li>
+          )}
           {info.phone && (
             <li class="contact__info-item">
               <span class="contact__info-label block text-sm font-medium">Telefone</span>

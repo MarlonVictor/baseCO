@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Conteúdo</title>
+    <!--
+      Preview básico com estilos Tailwind (compilados):
+
+      O iframe do Decap não usa o CSS do site automaticamente. Para ver cards/hero
+      com as mesmas classes do projeto:
+
+      1. Rode `bun run build` e abra `dist/_assets/` para identificar o arquivo
+         CSS gerado (nome com hash).
+      2. Publique esse arquivo em um URL estático (ou copie para `public/` com
+         nome fixo, ex. `public/admin/preview.css`, e faça commit).
+      3. Adicione um segundo bloco <script> após o decap-cms.js que chame:
+           if (window.CMS) {
+             CMS.registerPreviewStyle('/admin/preview.css');
+           }
+         (Ajuste o caminho conforme onde o CSS ficou servido.)
+
+      Sem `registerPreviewStyle`, o preview mostra só HTML sem Tailwind.
+    -->
+  </head>
+  <body>
+    <script src="https://unpkg.com/decap-cms@3/dist/decap-cms.js"></script>
+  </body>
+</html>

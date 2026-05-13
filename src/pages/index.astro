@@ -5,10 +5,11 @@
  * Landing Page principal. Consome o `Layout` (SEO + JSON-LD) e compõe a
  * sequência semântica: Header → Hero → Features → Testimonials → Contact → Footer.
  *
- * Toda configuração textual desta página vive aqui — facilita iteração de
- * copy sem tocar nos componentes.
+ * Hero, lista de serviços (Features) e bloco de contato vêm de
+ * `src/content/homepage/home.json` (Content Collection + Decap CMS).
  */
 
+import { getCollection } from 'astro:content';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/Header.astro';
 import Hero from '~/components/Hero.astro';
@@ -17,6 +18,13 @@ import Testimonials from '~/components/Testimonials.astro';
 import Contact from '~/components/Contact.astro';
 import Footer from '~/components/Footer.astro';
 import type { LocalBusinessSchema } from '~/components/seo/LocalBusinessJsonLd.astro';
+
+const homepageList = await getCollection('homepage');
+const home = homepageList.find((e) => e.id === 'home') ?? homepageList[0];
+if (!home) {
+  throw new Error('Conteúdo da homepage ausente: adicione src/content/homepage/home.json');
+}
+const { hero, services, contact } = home.data;
 
 const pageTitle = 'Seu Negócio — Soluções locais com excelência';
 const pageDescription =
@@ -61,10 +69,16 @@ const localBusiness: LocalBusinessSchema = {
   <Header />
 
   <main id="main-content" role="main" class="flex-1">
-    <Hero />
-    <Features />
+    <Hero title={hero.title} description={hero.subtitle} />
+    <Features features={services} />
     <Testimonials />
-    <Contact />
+    <Contact
+      info={{
+        whatsapp: contact.whatsapp,
+        email: contact.email,
+        address: contact.address,
+      }}
+    />
   </main>
 
   <Footer />

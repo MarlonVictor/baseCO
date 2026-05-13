@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "title": "Headline principal que comunica seu valor em uma frase.",
+    "subtitle": "Subtítulo curto reforçando o benefício e gerando contexto para a ação principal. Mantenha entre uma e duas linhas."
+  },
+  "services": [
+    {
+      "icon": "⚡",
+      "title": "Atendimento ágil",
+      "description": "Resposta em até 1h em horário comercial e suporte recorrente."
+    },
+    {
+      "icon": "🛠️",
+      "title": "Equipe especializada",
+      "description": "Profissionais certificados, com casos reais no segmento."
+    },
+    {
+      "icon": "📍",
+      "title": "Atuação local",
+      "description": "Presença na sua região com visitas técnicas quando necessário."
+    },
+    {
+      "icon": "✅",
+      "title": "Garantia estendida",
+      "description": "Cobertura de 12 meses em todos os serviços contratados."
+    },
+    {
+      "icon": "💬",
+      "title": "Comunicação clara",
+      "description": "Acompanhamento por WhatsApp e relatórios semanais."
+    },
+    {
+      "icon": "⭐",
+      "title": "Avaliação 4.9/5",
+      "description": "Mais de 500 clientes recomendam nosso trabalho."
+    }
+  ],
+  "contact": {
+    "whatsapp": "+55 (11) 99999-9999",
+    "email": "contato@exemplo.com.br",
+    "address": "Av. Paulista, 1000 — São Paulo/SP"
+  }
+}

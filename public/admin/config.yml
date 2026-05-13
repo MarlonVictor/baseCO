@@ -1,0 +1,49 @@
+# Preview + Tailwind: ver comentário em public/admin/index.html (CMS.registerPreviewStyle).
+
+backend:
+  name: git-gateway
+  branch: main
+
+# Requer Netlify Identity + Git Gateway (ou equivalente) no deploy.
+
+media_folder: public/assets/uploads
+public_folder: /assets/uploads
+
+collections:
+  - name: homepage
+    label: Homepage
+    files:
+      - label: Conteúdo da Home
+        name: home
+        file: src/content/homepage/home.json
+        fields:
+          - label: Hero
+            name: hero
+            widget: object
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Subtítulo, name: subtitle, widget: text }
+          - label: Serviços
+            name: services
+            widget: list
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Descrição, name: description, widget: text }
+              - {
+                  label: Ícone,
+                  name: icon,
+                  widget: string,
+                  hint: "Emoji ou texto curto (ex.: ⚡)",
+                }
+          - label: Contato
+            name: contact
+            widget: object
+            fields:
+              - {
+                  label: WhatsApp,
+                  name: whatsapp,
+                  widget: string,
+                  hint: "Número com DDI para wa.me (ex.: 5511999999999 ou formato exibido)",
+                }
+              - { label: E-mail, name: email, widget: string }
+              - { label: Endereço, name: address, widget: text }
