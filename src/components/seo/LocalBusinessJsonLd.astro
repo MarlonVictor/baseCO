@@ -1,0 +1,112 @@
+---
+/**
+ * LocalBusinessJsonLd
+ * -------------------
+ * Renderiza um bloco JSON-LD (Schema.org) do tipo `LocalBusiness` no <head>.
+ * Compatível com Google Rich Results para negócios locais.
+ *
+ * Docs: https://schema.org/LocalBusiness
+ *       https://developers.google.com/search/docs/appearance/structured-data/local-business
+ *
+ * Para usar subtipos mais específicos (Restaurant, Store, Dentist, etc.),
+ * passe `type` com o nome exato do Schema.org.
+ */
+
+export interface LocalBusinessAddress {
+  streetAddress: string;
+  addressLocality: string;   // cidade
+  addressRegion: string;     // UF
+  postalCode: string;
+  addressCountry: string;    // ISO 3166-1 alpha-2 (ex: "BR")
+}
+
+export interface LocalBusinessGeo {
+  latitude: number;
+  longitude: number;
+}
+
+export interface LocalBusinessSchema {
+  /** Subtipo do Schema.org (default: "LocalBusiness"). Ex: "Restaurant". */
+  type?: string;
+  /** Nome legal/fantasia do negócio. */
+  name: string;
+  /** URL canônica (default: site). */
+  url?: string;
+  /** Imagem representativa (logo ou foto da fachada). URL absoluta. */
+  image?: string | string[];
+  /** Logo (separado de `image` para destaque no Knowledge Panel). */
+  logo?: string;
+  /** Descrição curta. */
+  description?: string;
+  /** Telefone em formato internacional (ex: "+55-11-99999-9999"). */
+  telephone?: string;
+  /** Faixa de preço usando símbolos ($, $$, $$$). */
+  priceRange?: string;
+  /** Endereço estruturado. */
+  address?: LocalBusinessAddress;
+  /** Coordenadas (melhora ranking em buscas geolocalizadas). */
+  geo?: LocalBusinessGeo;
+  /**
+   * Horários no formato Schema.org `openingHours` (ex: ["Mo-Fr 09:00-18:00"]).
+   * Veja: https://schema.org/openingHours
+   */
+  openingHours?: string[];
+  /** Perfis em redes sociais — vira `sameAs`. */
+  sameAs?: string[];
+}
+
+interface Props extends LocalBusinessSchema {}
+
+const {
+  type = 'LocalBusiness',
+  name,
+  url,
+  image,
+  logo,
+  description,
+  telephone,
+  priceRange,
+  address,
+  geo,
+  openingHours,
+  sameAs,
+} = Astro.props;
+
+const schema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': type,
+  name,
+};
+
+if (url) schema.url = url;
+if (image) schema.image = image;
+if (logo) schema.logo = logo;
+if (description) schema.description = description;
+if (telephone) schema.telephone = telephone;
+if (priceRange) schema.priceRange = priceRange;
+
+if (address) {
+  schema.address = {
+    '@type': 'PostalAddress',
+    ...address,
+  };
+}
+
+if (geo) {
+  schema.geo = {
+    '@type': 'GeoCoordinates',
+    latitude: geo.latitude,
+    longitude: geo.longitude,
+  };
+}
+
+if (openingHours && openingHours.length > 0) {
+  schema.openingHours = openingHours;
+}
+
+if (sameAs && sameAs.length > 0) {
+  schema.sameAs = sameAs;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />

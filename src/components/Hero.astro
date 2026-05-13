@@ -1,0 +1,121 @@
+---
+/**
+ * Hero.astro
+ * ----------
+ * Seção principal acima da dobra. Estrutura semântica + imagem otimizada
+ * (LCP). Mobile-first: empilhado no mobile, lado-a-lado no desktop.
+ *
+ * Pontos para o Design System externo:
+ *  - Classes vazias `.hero`, `.hero__title`, `.hero__cta` são reservadas como
+ *    hooks. Aplique tipografia, cores e espaçamento via DS sem refatorar.
+ *  - Para animações de entrada, ver bloco "ANIMAÇÃO" no final do componente.
+ */
+
+import { Image } from 'astro:assets';
+import heroImage from '~/assets/hero.svg';
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  primaryCta?: { label: string; href: string; ariaLabel?: string };
+  secondaryCta?: { label: string; href: string; ariaLabel?: string };
+  imageAlt?: string;
+}
+
+const {
+  eyebrow = 'Bem-vindo',
+  title = 'Headline principal que comunica seu valor em uma frase.',
+  description = 'Subtítulo curto reforçando o benefício e gerando contexto para a ação principal. Mantenha entre uma e duas linhas.',
+  primaryCta = { label: 'Começar agora', href: '#contato', ariaLabel: 'Ir para a seção de contato' },
+  secondaryCta = { label: 'Saiba mais', href: '#features', ariaLabel: 'Ir para a seção de funcionalidades' },
+  imageAlt = 'Ilustração representando o produto principal',
+} = Astro.props;
+---
+
+<section
+  class="hero relative w-full"
+  aria-labelledby="hero-title"
+  data-section="hero"
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:py-32">
+    <div class="grid items-center gap-10 md:grid-cols-2 md:gap-12">
+      <div class="hero__content order-2 md:order-1">
+        {eyebrow && (
+          <p class="hero__eyebrow text-sm font-medium uppercase tracking-wider">
+            {eyebrow}
+          </p>
+        )}
+
+        <h1
+          id="hero-title"
+          class="hero__title mt-3 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
+        >
+          {title}
+        </h1>
+
+        <p class="hero__description mt-5 max-w-prose text-base sm:text-lg">
+          {description}
+        </p>
+
+        <div class="hero__actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a
+            href={primaryCta.href}
+            class="hero__cta hero__cta--primary inline-flex items-center justify-center rounded px-6 py-3 font-medium"
+            aria-label={primaryCta.ariaLabel ?? primaryCta.label}
+          >
+            {primaryCta.label}
+          </a>
+
+          {secondaryCta && (
+            <a
+              href={secondaryCta.href}
+              class="hero__cta hero__cta--secondary inline-flex items-center justify-center rounded px-6 py-3 font-medium"
+              aria-label={secondaryCta.ariaLabel ?? secondaryCta.label}
+            >
+              {secondaryCta.label}
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div class="hero__media order-1 md:order-2">
+        <!--
+          Imagem do Hero — LCP candidata.
+          - `loading="eager"` + `fetchpriority="high"`: prioriza no carregamento.
+          - `widths` + `sizes`: srcset responsivo (Astro gera AVIF/WebP automaticamente
+            ao usar raster). SVG é passthrough.
+          - `alt` descritivo (não decorativo).
+        -->
+        <Image
+          src={heroImage}
+          alt={imageAlt}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="h-auto w-full rounded-lg"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!--
+    DESIGN SYSTEM HOOK
+    Aplique aqui (ou nas classes .hero__*) os tokens do DS externo:
+    cores de fundo, gradientes, ornamentos absolutos, etc.
+  -->
+
+  <!--
+    ANIMAÇÃO
+    Ponto de injeção para script de entrada (ex: GSAP, Motion, IntersectionObserver).
+    Exemplo:
+      <script>
+        import { animate } from 'motion';
+        animate('.hero__title', { opacity: [0, 1], y: [20, 0] }, { duration: 0.6 });
+      </script>
+    Mantenha qualquer script aqui como `<script>` (módulo) — Astro fará bundling
+    e tree-shaking automaticamente. Evite `is:inline` para não bloquear o LCP.
+  -->
+</section>

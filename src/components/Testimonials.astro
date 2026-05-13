@@ -1,0 +1,101 @@
+---
+/**
+ * Testimonials.astro
+ * ------------------
+ * Lista de depoimentos com marcação semântica (`<blockquote>` + `<cite>`).
+ * Acessibilidade: cada citação anuncia o autor e seu papel.
+ */
+
+export interface Testimonial {
+  quote: string;
+  author: string;
+  role?: string;
+  rating?: number; // 1-5
+}
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  testimonials?: Testimonial[];
+}
+
+const {
+  eyebrow = 'Depoimentos',
+  title = 'O que nossos clientes dizem',
+  testimonials = [
+    {
+      quote: 'Atendimento impecável e entrega no prazo. Recomendo sem reservas.',
+      author: 'Mariana Silva',
+      role: 'Cliente desde 2022',
+      rating: 5,
+    },
+    {
+      quote: 'Profissionais sérios, comunicação clara e resultado acima do esperado.',
+      author: 'Rafael Costa',
+      role: 'Sócio, Estúdio Norte',
+      rating: 5,
+    },
+    {
+      quote: 'A equipe foi flexível com nossas necessidades e o suporte continua excelente.',
+      author: 'Ana Pereira',
+      role: 'Gestora de Marketing',
+      rating: 5,
+    },
+  ],
+} = Astro.props;
+---
+
+<section
+  id="depoimentos"
+  class="testimonials w-full"
+  aria-labelledby="testimonials-title"
+  data-section="testimonials"
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
+    <header class="testimonials__header mx-auto max-w-2xl text-center">
+      {eyebrow && (
+        <p class="testimonials__eyebrow text-sm font-medium uppercase tracking-wider">
+          {eyebrow}
+        </p>
+      )}
+      <h2
+        id="testimonials-title"
+        class="testimonials__title mt-2 text-3xl font-bold sm:text-4xl"
+      >
+        {title}
+      </h2>
+    </header>
+
+    <ul
+      class="testimonials__grid mt-12 grid grid-cols-1 gap-6 md:grid-cols-3"
+      role="list"
+    >
+      {testimonials.map((t) => (
+        <li class="testimonials__item">
+          <figure class="testimonials__figure flex h-full flex-col rounded-lg p-6">
+            {t.rating && (
+              <div
+                class="testimonials__rating mb-3"
+                aria-label={`Avaliação: ${t.rating} de 5 estrelas`}
+              >
+                <span aria-hidden="true">{'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}</span>
+              </div>
+            )}
+
+            <blockquote class="testimonials__quote flex-1 text-base">
+              <p>“{t.quote}”</p>
+            </blockquote>
+
+            <figcaption class="testimonials__author mt-4 text-sm">
+              <cite class="not-italic font-semibold">{t.author}</cite>
+              {t.role && <span class="testimonials__role block">{t.role}</span>}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- DESIGN SYSTEM HOOK: cores e tipografia em .testimonials__* -->
+  <!-- ANIMAÇÃO: ideal para slider/carousel — adicionar script aqui -->
+</section>

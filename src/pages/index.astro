@@ -1,0 +1,71 @@
+---
+/**
+ * index.astro
+ * -----------
+ * Landing Page principal. Consome o `Layout` (SEO + JSON-LD) e compõe a
+ * sequência semântica: Header → Hero → Features → Testimonials → Contact → Footer.
+ *
+ * Toda configuração textual desta página vive aqui — facilita iteração de
+ * copy sem tocar nos componentes.
+ */
+
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import Hero from '~/components/Hero.astro';
+import Features from '~/components/Features.astro';
+import Testimonials from '~/components/Testimonials.astro';
+import Contact from '~/components/Contact.astro';
+import Footer from '~/components/Footer.astro';
+import type { LocalBusinessSchema } from '~/components/seo/LocalBusinessJsonLd.astro';
+
+const pageTitle = 'Seu Negócio — Soluções locais com excelência';
+const pageDescription =
+  'Empresa local especializada em [seu serviço] em São Paulo. Atendimento ágil, equipe certificada e garantia estendida. Solicite um orçamento.';
+
+const localBusiness: LocalBusinessSchema = {
+  type: 'LocalBusiness',
+  name: 'Seu Negócio',
+  url: 'https://exemplo.com.br',
+  image: 'https://exemplo.com.br/og-default.svg',
+  logo: 'https://exemplo.com.br/favicon.svg',
+  description: pageDescription,
+  telephone: '+55-11-99999-9999',
+  priceRange: '$$',
+  address: {
+    streetAddress: 'Av. Paulista, 1000',
+    addressLocality: 'São Paulo',
+    addressRegion: 'SP',
+    postalCode: '01310-100',
+    addressCountry: 'BR',
+  },
+  geo: {
+    latitude: -23.5613,
+    longitude: -46.6565,
+  },
+  openingHours: ['Mo-Fr 09:00-18:00', 'Sa 09:00-13:00'],
+  sameAs: [
+    'https://instagram.com/seunegocio',
+    'https://facebook.com/seunegocio',
+  ],
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  siteName="Seu Negócio"
+  themeColor="#0f172a"
+  localBusiness={localBusiness}
+>
+  <Header />
+
+  <main id="main-content" role="main" class="flex-1">
+    <Hero />
+    <Features />
+    <Testimonials />
+    <Contact />
+  </main>
+
+  <Footer />
+</Layout>
