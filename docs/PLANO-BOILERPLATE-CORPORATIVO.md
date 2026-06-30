@@ -1,5 +1,7 @@
 # Plano de Evolução — Boilerplate Monorepo Corporativo de Alta Performance
 
+> **Nota (2026):** O repositório evoluiu para **template copiável** (um Astro app na raiz, sem Turborepo/workspaces). Este documento permanece como referência histórica do roadmap; para a estrutura atual, consulte `AGENTS.md` e `docs/NEW-LANDING-GUIDE.md`.
+
 > **Objetivo:** Transformar o `seo-base` (Astro 5 + Tailwind + Decap CMS) em um boilerplate corporativo reutilizável para landing pages de pequenos negócios, com **Lighthouse > 95 em todas as categorias**, acessibilidade WCAG 2.2 AA validada automaticamente, monorepo escalável e suítes de testes e2e completas — incluindo **instruções para IA** que garantam consistência em cada nova implementação.
 
 ---

@@ -1,0 +1,109 @@
+---
+/**
+ * Header.astro
+ * ------------
+ * Cabeçalho com navegação principal. Usa landmarks semânticos
+ * (`<header>`, `<nav>`) e padrão acessível para menu mobile (botão com
+ * `aria-controls` + `aria-expanded`).
+ */
+
+import MobileMenuIsland from './islands/MobileMenuIsland.astro';
+
+export interface NavItem {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  brand?: string;
+  navItems?: NavItem[];
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  brand = 'Seu Negócio',
+  navItems = [
+    { label: 'Início', href: '#inicio' },
+    { label: 'Diferenciais', href: '#features' },
+    { label: 'Depoimentos', href: '#depoimentos' },
+    { label: 'Contato', href: '#contato' },
+  ],
+  ctaLabel = 'Fale conosco',
+  ctaHref = '#contato',
+} = Astro.props;
+---
+
+<header
+  class="header sticky top-0 z-40 w-full"
+  data-section="header"
+  role="banner"
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+    <a href="/" class="header__brand text-lg font-bold" aria-label={`${brand} — Página inicial`}>
+      {brand}
+    </a>
+
+    <nav class="header__nav hidden md:block" aria-label="Navegação principal">
+      <ul class="flex items-center gap-6">
+        {navItems.map((item) => (
+          <li>
+            <a href={item.href} class="header__link inline-block py-2">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={ctaHref}
+        class="header__cta hidden md:inline-flex items-center justify-center rounded px-4 py-2 font-medium"
+      >
+        {ctaLabel}
+      </a>
+
+      <button
+        type="button"
+        class="header__menu-toggle md:hidden inline-flex h-10 w-10 items-center justify-center rounded"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        aria-label="Abrir menu de navegação"
+        data-menu-toggle
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="header__mobile-menu hidden border-t md:hidden"
+    data-mobile-menu
+  >
+    <nav aria-label="Navegação mobile" class="px-4 py-4 sm:px-6">
+      <ul class="flex flex-col gap-2">
+        {navItems.map((item) => (
+          <li>
+            <a href={item.href} class="header__link block py-2">
+              {item.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={ctaHref} class="header__cta inline-flex items-center justify-center rounded px-4 py-2 font-medium">
+            {ctaLabel}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<MobileMenuIsland />
+
+<!--
+  DESIGN SYSTEM HOOK
+  Estilize `.header`, `.header__brand`, `.header__link`, `.header__cta` no DS.
+-->

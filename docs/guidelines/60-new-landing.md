@@ -3,15 +3,20 @@
 
 Use ao iniciar projeto para um novo cliente. Guia completo: `docs/NEW-LANDING-GUIDE.md`.
 
+## 0. Duplicar o boilerplate
+
+- [ ] Criar novo repositório a partir deste template (GitHub “Use this template” ou cópia)
+- [ ] Atualizar `package.json` (`name`, `description`)
+
 ## 1. Configuração base
 
-- [ ] Atualizar `apps/<app>/astro.config.mjs` → `site: 'https://dominio-cliente.com.br'`
-- [ ] Configurar `apps/<app>/public/admin/config.yml` → `backend.repo` e `branch`
+- [ ] Atualizar `astro.config.mjs` → `site: 'https://dominio-cliente.com.br'`
+- [ ] Configurar `public/admin/config.yml` → `backend.repo` e `branch`
 
 ## 2. Conteúdo
 
-- [ ] Preencher `apps/<app>/src/content/homepage/home.json` (hero, services, contact)
-- [ ] Ajustar `localBusiness` em `apps/<app>/src/pages/index.astro`
+- [ ] Preencher `src/content/homepage/home.json` (hero, services, contact)
+- [ ] Ajustar `localBusiness` em `src/pages/index.astro`
 - [ ] Substituir textos default de `pageTitle` e `pageDescription`
 - [ ] Adicionar imagens do cliente em `public/assets/` e `src/assets/`
 
@@ -29,18 +34,10 @@ Use ao iniciar projeto para um novo cliente. Guia completo: `docs/NEW-LANDING-GU
 
 ## 5. Quality gates (antes de entregar)
 
-- [ ] `bun run build` sem erros
-- [ ] Lighthouse ≥ 95 nas 4 categorias (mobile)
-- [ ] axe-core: 0 violações
-- [ ] Testes e2e passando (quando suíte existir)
-- [ ] Navegação por teclado validada manualmente
-
-## 6. Pós-monorepo (futuro)
-
-```bash
-pnpm scaffold:landing --name cliente-x
-pnpm quality --filter=cliente-x
-```
+- [ ] `bun run quality` (lint + build + e2e + a11y + lighthouse)
+- [ ] axe-core e pa11y: 0 violações
+- [ ] Testes de teclado em `e2e/a11y/keyboard-nav.spec.ts` passando
+- [ ] Checklist manual de a11y (contraste, skip link, formulário) — ver `NEW-LANDING-GUIDE.md` §5
 
 ## Referência
 

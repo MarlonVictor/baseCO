@@ -1,0 +1,19 @@
+---
+/**
+ * VisuallyHidden.astro
+ * --------------------
+ * Conteúdo visível apenas para leitores de tela (equivalente a sr-only).
+ */
+
+export interface Props {
+  /** Elemento HTML a renderizar. Default: span */
+  as?: 'span' | 'p' | 'div';
+  class?: string;
+}
+
+const { as: Tag = 'span', class: className } = Astro.props;
+---
+
+<Tag class:list={['visually-hidden', className]}>
+  <slot />
+</Tag>

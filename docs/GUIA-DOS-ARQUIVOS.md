@@ -26,9 +26,9 @@ Referência rápida da documentação e configuração de IA do projeto.
 
 ### `PLANO-BOILERPLATE-CORPORATIVO.md`
 
-**Para que serve:** Roadmap técnico completo — monorepo, Core Web Vitals, acessibilidade, testes e2e, CI/CD. É o "plano mestre" de evolução do boilerplate.
+**Para que serve:** Roadmap técnico histórico — Core Web Vitals, acessibilidade, testes e2e, CI/CD. Parte do texto descreve a fase monorepo (já descartada); a nota no topo do arquivo aponta para a estrutura atual.
 
-**Quando usar:** Ao planejar implementações maiores (ex: migrar para Turborepo, configurar Lighthouse CI). Não é necessário para customizar uma landing simples de cliente.
+**Quando usar:** Referência de decisões e metas de qualidade. Para estrutura e fluxo de trabalho atuais, prefira `AGENTS.md` e `NEW-LANDING-GUIDE.md`.
 
 ---
 

@@ -1,0 +1,53 @@
+---
+/**
+ * LazySection.astro
+ * -----------------
+ * Wrapper que adia renderização pesada até a seção entrar no viewport.
+ * Use para seções below-the-fold com listas, carrosséis ou mídia pesada.
+ */
+
+export interface Props {
+  /** Margem extra antes de carregar (CSS margin syntax). Default: '200px'. */
+  rootMargin?: string;
+  class?: string;
+}
+
+const { rootMargin = '200px', class: className } = Astro.props;
+const slotHtml = await Astro.slots.render('default');
+---
+
+<div
+  class:list={['lazy-section', className]}
+  data-lazy-section
+  data-root-margin={rootMargin}
+>
+  <noscript>
+    <Fragment set:html={slotHtml} />
+  </noscript>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('[data-lazy-section]');
+
+  sections.forEach((el) => {
+    if (!('IntersectionObserver' in window)) {
+      el.innerHTML = el.querySelector('noscript')?.innerHTML ?? '';
+      return;
+    }
+
+    const margin = el.getAttribute('data-root-margin') ?? '200px';
+    const html = el.querySelector('noscript')?.innerHTML ?? '';
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          el.innerHTML = html;
+          observer.disconnect();
+        }
+      },
+      { rootMargin: margin },
+    );
+
+    observer.observe(el);
+  });
+</script>

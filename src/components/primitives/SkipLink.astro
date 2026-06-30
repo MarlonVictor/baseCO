@@ -1,0 +1,21 @@
+---
+/**
+ * SkipLink.astro
+ * --------------
+ * Link de salto para o conteúdo principal (WCAG 2.4.1).
+ * Visível apenas ao receber foco via teclado.
+ */
+
+export interface Props {
+  /** ID do alvo (sem #). Default: main-content */
+  targetId?: string;
+  /** Texto do link */
+  label?: string;
+}
+
+const { targetId = 'main-content', label = 'Pular para o conteúdo' } = Astro.props;
+---
+
+<a href={`#${targetId}`} class="skip-link">
+  {label}
+</a>

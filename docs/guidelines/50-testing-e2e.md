@@ -1,22 +1,21 @@
 
 # Testes E2E
 
-> Suíte planejada na Fase 1 do roadmap. Ao criar ou editar testes, siga estes padrões.
+> Suíte ativa no template. Ao criar ou editar testes, siga estes padrões.
 
 ## Stack
 
 - **Playwright** — runner, multi-browser (Chromium + mobile)
 - **@axe-core/playwright** — 0 violações WCAG 2.2 AA
-- Helpers compartilhados em `packages/testing/` (pós-monorepo) ou `e2e/fixtures/` (atual)
+- Helpers em `e2e/helpers/` (`axe-setup.ts`, `keyboard-helpers.ts`)
 
 ## Estrutura
 
 ```
 e2e/
-├── fixtures/          # page objects, helpers de teclado
+├── helpers/           # axe-setup, keyboard-helpers
 ├── a11y/              # axe-core + keyboard-nav
-├── seo/               # meta-tags, JSON-LD
-└── flows/             # navegação, formulário
+└── seo/               # meta-tags, JSON-LD
 ```
 
 ## Cenários obrigatórios por landing
@@ -50,8 +49,10 @@ Todo componente interativo novo (menu, modal, carrossel, formulário) exige test
 ## Execução
 
 ```bash
-bun run build && bun run preview   # servir dist
-bun run test:e2e                   # quando configurado
+bun run test:e2e      # build + preview + Playwright
+bun run a11y          # pa11y-ci pós-build
+bun run lighthouse    # Lighthouse CI
+bun run quality       # lint + build + e2e + a11y + lighthouse
 ```
 
 Não mergear features interativas sem teste e2e correspondente.

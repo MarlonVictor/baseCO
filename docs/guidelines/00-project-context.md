@@ -1,21 +1,28 @@
 
 # SEO Base — Boilerplate Corporativo
 
-Landing pages estáticas para pequenos negócios. Leia `AGENTS.md` e `docs/PLANO-BOILERPLATE-CORPORATIVO.md` para visão completa.
+Landing pages estáticas para pequenos negócios. Leia `AGENTS.md` e `docs/NEW-LANDING-GUIDE.md` para visão completa.
+
+## Modelo: template copiável
+
+Este repositório é um **boilerplate único** — ao fechar um cliente, **copie o repo inteiro** para um novo repositório e customize lá. Não é monorepo multi-cliente.
 
 ## Stack
 
 - **Astro 5** (`output: 'static'`) + **TypeScript** + **Tailwind CSS 3**
-- **Content Collections** com schemas **Zod** (`apps/*/src/content/config.ts`)
-- **Decap CMS** em `apps/*/public/admin/` (conteúdo editável via Git)
+- **Content Collections** com schemas **Zod** (`src/content/config.ts`)
+- **Decap CMS** em `public/admin/` (conteúdo editável via Git)
 - **Sharp** para otimização de imagens (`astro:assets`)
 - **Bun** como package manager (compatível com npm/pnpm)
+- **Playwright + axe-core**, **Lighthouse CI**, **pa11y-ci**
 
-## Estrutura atual (monorepo Turborepo)
+## Estrutura
 
-- **Apps** em `apps/` — cada landing de cliente (referência: `apps/template-landing/`)
-- **Pacotes** em `packages/` — `@repo/ui`, `@repo/seo`, `@repo/testing`
-- Código legado na raiz (`src/`, `public/`) foi migrado — não recriar
+- **`src/components/`** — seções reutilizáveis (Header, Hero, etc.)
+- **`src/seo/`** — JSON-LD e tipos
+- **`src/content/`** — textos do negócio (JSON)
+- **`e2e/`** — testes Playwright + helpers
+- **`docs/guidelines/`** — regras para IA e devs
 
 ## Metas obrigatórias (quality gates)
 
@@ -24,20 +31,18 @@ Landing pages estáticas para pequenos negócios. Leia `AGENTS.md` e `docs/PLANO
 | Lighthouse (Performance, A11y, Best Practices, SEO) | ≥ 95 cada |
 | LCP | ≤ 1.8s |
 | CLS | ≤ 0.02 |
-| INP | ≤ 150ms |
 | WCAG | 2.2 Nível AA |
 | axe-core em e2e | 0 violações |
 
 ## Princípios inegociáveis
 
-1. **Separação conteúdo × visual** — Textos em JSON/Markdown; estilos via hooks CSS (`.hero__title`, `.header__cta`) no Design System do cliente.
-2. **Progressive enhancement** — Site funcional sem JS; interatividade via islands ou `<script>` não bloqueante.
-3. **Zero regressão** — Toda feature nova exige teste e2e e passagem em axe-core (quando a suíte existir).
-4. **Semântica preservada** — Nunca quebrar landmarks, headings ou JSON-LD ao aplicar visual do cliente.
+1. **Separação conteúdo × visual** — Textos em JSON; estilos via hooks CSS no Design System do cliente.
+2. **Progressive enhancement** — Site funcional sem JS; interatividade via islands sob demanda.
+3. **Zero regressão** — Toda feature nova exige teste e2e e passagem em axe-core.
+4. **Semântica preservada** — Nunca quebrar landmarks, headings ou JSON-LD ao aplicar visual.
 
 ## O que NÃO fazer
 
-- Adicionar `<script>` bloqueante no `<head>` ou `client:load` sem justificativa
 - Hardcodar textos de negócio em `.astro` (usar Content Collections)
 - Remover skip link, `aria-*` ou `prefers-reduced-motion`
 - Usar SVG como OG image em produção (usar JPG/WebP 1200×630)

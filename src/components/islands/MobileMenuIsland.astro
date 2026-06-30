@@ -1,0 +1,31 @@
+---
+/**
+ * MobileMenuIsland.astro
+ * ----------------------
+ * Island que carrega o script do menu mobile apenas em viewports pequenos.
+ * Equivalente a client:media="(max-width: 767px)" sem framework adicional.
+ */
+---
+
+<script>
+  const MOBILE_QUERY = '(max-width: 767px)';
+
+  async function loadMobileMenu(): Promise<void> {
+    const { initMobileMenus } = await import('./MobileMenu.ts');
+    initMobileMenus();
+  }
+
+  const mq = window.matchMedia(MOBILE_QUERY);
+
+  if (mq.matches) {
+    void loadMobileMenu();
+  } else {
+    mq.addEventListener(
+      'change',
+      (event) => {
+        if (event.matches) void loadMobileMenu();
+      },
+      { once: true },
+    );
+  }
+</script>

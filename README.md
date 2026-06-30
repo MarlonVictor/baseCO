@@ -10,7 +10,7 @@ Boilerplate / Landing Page base estática com **Astro 5** e **Tailwind CSS**, es
 |---------|-----------|
 | [`AGENTS.md`](./AGENTS.md) | Ponto de entrada para agentes de IA — stack, metas, convenções |
 | [`docs/guidelines/`](./docs/guidelines/) | Padrões de desenvolvimento por área |
-| [`docs/PLANO-BOILERPLATE-CORPORATIVO.md`](./docs/PLANO-BOILERPLATE-CORPORATIVO.md) | Roadmap completo (performance, a11y, monorepo, testes) |
+| [`docs/PLANO-BOILERPLATE-CORPORATIVO.md`](./docs/PLANO-BOILERPLATE-CORPORATIVO.md) | Roadmap histórico (performance, a11y, testes) |
 | [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md) | Passo a passo para nova landing de cliente |
 | [`docs/GUIA-DOS-ARQUIVOS.md`](./docs/GUIA-DOS-ARQUIVOS.md) | Índice simples — para que serve cada documento |
 
@@ -24,7 +24,7 @@ Boilerplate / Landing Page base estática com **Astro 5** e **Tailwind CSS**, es
 
 | Desktop View | Mobile View |
 |:---:|:---:|
-| ![Landing Page — Desktop](./apps/template-landing/public/og-default.jpg) | ![Landing Page — Mobile](./apps/template-landing/public/favicon.svg) |
+| ![Landing Page — Desktop](./public/og-default.jpg) | ![Landing Page — Mobile](./public/favicon.svg) |
 | _Layout estruturado com cabeçalho, hero e seções modulares_ | _Navegação mobile nativa e design responsivo fluido_ |
 
 ### Painel de Conteúdo (CMS)
@@ -86,7 +86,7 @@ Boilerplate / Landing Page base estática com **Astro 5** e **Tailwind CSS**, es
 
 **Decisões de design:**
 - **Estático por Padrão** — Compilação 100% estática (`output: 'static'`) com compressão nativa de HTML e otimização de imagens LCP via `Sharp` para carregamento ultra-rápido.
-- **Monorepo Simples** — Estrutura unificada com código fonte e painel administrativo rodando totalmente no client-side, eliminando a necessidade de bancos de dados ativos ou servidores dedicados.
+- **Template copiável** — Um repositório por cliente; duplique este boilerplate e customize.
 - **Separação de Conteúdo e Visual** — Textos e contatos residem puramente em coleções locais JSON, permitindo que redatores atualizem o site sem mexer em arquivos `.astro` ou regras CSS.
 
 ---
@@ -102,37 +102,32 @@ Boilerplate / Landing Page base estática com **Astro 5** e **Tailwind CSS**, es
 | **Gerenciador de Pacotes** | Bun 1.3.x (compatível com npm/yarn/pnpm) |
 | **CMS** | Decap CMS 3.x (distribuição estática via CDN) |
 | **Validação de Conteúdo** | Zod (Astro Content Collections Schema) |
-| **Monorepo** | Turborepo 2.x + Bun workspaces |
+| **Monorepo** | Não — template único copiável por cliente |
 | **Testes E2E** | Playwright + axe-core |
 | **Lint** | ESLint 9 + eslint-plugin-astro + jsx-a11y |
 
 ---
 
-## Estrutura do repositório (monorepo)
+## Estrutura do repositório (template copiável)
 
 ```
-seo-base/
-├── apps/
-│   └── template-landing/       # App de referência (landing base)
-│       ├── src/
-│       │   ├── content/        # JSON + Zod (Decap CMS)
-│       │   ├── layouts/        # Layout.astro
-│       │   ├── pages/          # Rotas Astro
-│       │   └── styles/         # global.css
-│       ├── public/             # admin/, assets/, og-default.jpg
-│       └── e2e/                # Playwright (SEO + a11y)
-├── packages/
-│   ├── ui/                     # Componentes compartilhados (@repo/ui)
-│   ├── seo/                    # JSON-LD e tipos (@repo/seo)
-│   ├── testing/                # Helpers axe-core (@repo/testing)
-│   └── config/eslint/          # Config ESLint compartilhada
-├── docs/
-│   ├── guidelines/             # Padrões (performance, a11y, SEO…)
-│   ├── templates/
-│   └── …
-├── turbo.json
-├── eslint.config.js
-└── package.json                # Scripts raiz (turbo)
+seo-base/                       # copiar este repo para cada cliente
+├── src/
+│   ├── components/             # Header, Hero, Features, primitives/, islands/
+│   ├── seo/                    # LocalBusinessJsonLd, types
+│   ├── layouts/                # Layout.astro
+│   ├── pages/                  # Rotas Astro
+│   ├── content/                # JSON + Zod (Decap CMS)
+│   ├── styles/                 # global.css, a11y.css
+│   └── assets/                 # Imagens (astro:assets)
+├── e2e/                        # Playwright + helpers axe/teclado
+├── public/                     # admin/, og-default.jpg, favicon
+├── scripts/                    # lighthouse, validate-a11y
+├── testing/                    # lighthouse-budget.json
+├── docs/guidelines/            # Padrões para IA e devs
+├── astro.config.mjs
+├── playwright.config.ts
+└── package.json
 ```
 
 ---
@@ -155,8 +150,6 @@ npm install
 
 ```bash
 bun run dev
-# ou apenas o app template:
-cd apps/template-landing && bun run dev
 ```
 
 Acesse o site em [http://localhost:4321](http://localhost:4321).
@@ -166,27 +159,16 @@ Para acessar o painel local do CMS, acesse [http://localhost:4321/admin](http://
 ### Compilar, testar e validar
 
 ```bash
-bun run build       # build de produção (Turborepo)
-bun run lint        # ESLint (apps + packages)
+bun run build       # build → dist/
+bun run lint        # ESLint
 bun run test:e2e    # Playwright + axe-core
-bun run preview     # preview da build
+bun run lighthouse  # Lighthouse CI (≥ 95 nas 4 categorias)
+bun run a11y        # pa11y-ci pós-build
+bun run quality     # lint + build + e2e + a11y + lighthouse
+bun run preview     # servir dist/
 ```
 
-### Compilar versão de produção (app isolado)
-
-```bash
-cd apps/template-landing && bun run build
-```
-
-O comando de build compila o site em `apps/template-landing/dist/`.
-
-### Visualizar build localmente
-
-```bash
-bun run preview
-# ou se preferir npm:
-npm run preview
-```
+O build compila o site em `dist/`.
 
 ---
 
@@ -222,9 +204,9 @@ backend:
 
 ## Status do projeto
 
-**Fase 1 concluída:** monorepo Turborepo, pacotes `@repo/ui` e `@repo/seo`, ESLint + jsx-a11y, Playwright + axe-core, OG image JPG.
+**Boilerplate pronto:** template copiável com quality gates (Playwright, Lighthouse, pa11y), guidelines para IA e componentes otimizados.
 
-Próximo passo: Fase 2 (Lighthouse CI, lazy loading, CI/CD) — ver [`docs/PLANO-BOILERPLATE-CORPORATIVO.md`](./docs/PLANO-BOILERPLATE-CORPORATIVO.md).
+Para novo cliente: duplique o repositório e siga [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md).
 
 ---
 

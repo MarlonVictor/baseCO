@@ -1,22 +1,22 @@
 # Guia — Nova Landing Page de Cliente
 
-Passo a passo para criar ou customizar uma landing a partir do boilerplate `seo-base`. Destinado a desenvolvedores e agentes de IA.
+Passo a passo para iniciar um projeto de cliente a partir do boilerplate `seo-base`.
 
-> Siga `docs/NEW-LANDING-GUIDE.md` e `docs/guidelines/60-new-landing.md` ao iniciar este fluxo.
+> **Primeiro passo:** duplique este repositório (GitHub “Use this template” ou cópia local) para um **novo repositório** do cliente. Todo o trabalho abaixo acontece no repo do cliente.
 
 ---
 
 ## Visão geral do fluxo
 
 ```
-Config base → Conteúdo (JSON + CMS) → Visual (DS) → SEO → Quality gates → Deploy
+Duplicar repo → Config base → Conteúdo (JSON + CMS) → Visual (DS) → SEO → Quality gates → Deploy
 ```
 
 ---
 
 ## 1. Configuração do projeto
 
-### `apps/template-landing/astro.config.mjs`
+### `astro.config.mjs`
 
 ```javascript
 export default defineConfig({
@@ -47,7 +47,7 @@ public_folder: /assets
 
 ## 2. Conteúdo
 
-### `apps/template-landing/src/content/homepage/home.json`
+### `src/content/homepage/home.json`
 
 Preencher todos os campos validados pelo schema em `src/content/config.ts`:
 
@@ -72,7 +72,7 @@ Preencher todos os campos validados pelo schema em `src/content/config.ts`:
 }
 ```
 
-### `apps/template-landing/src/pages/index.astro`
+### `src/pages/index.astro`
 
 Atualizar:
 
@@ -98,8 +98,8 @@ O boilerplate reserva **hooks CSS** nos componentes (`.hero__title`, `.header__c
 
 ### Onde aplicar estilos
 
-1. **`apps/template-landing/src/styles/global.css`** — bloco `DESIGN SYSTEM OVERRIDES`
-2. **`apps/template-landing/src/layouts/Layout.astro`** — bloco `FONTS` no `<head>`
+1. **`src/styles/global.css`** — bloco `DESIGN SYSTEM OVERRIDES`
+2. **`src/layouts/Layout.astro`** — bloco `FONTS` no `<head>`
 3. **CSS externo** — `<link rel="stylesheet">` no Layout, após Tailwind
 
 ### Fontes
@@ -122,9 +122,9 @@ Sempre `font-display: swap` no `@font-face`.
 
 | Arquivo | Uso |
 |---------|-----|
-| `packages/ui/src/assets/hero.*` | Imagem LCP do Hero |
-| `apps/template-landing/public/assets/*` | Uploads via Decap CMS |
-| `apps/template-landing/public/og-default.jpg` | OG/Twitter (1200×630) |
+| `src/assets/hero.*` | Imagem LCP do Hero |
+| `public/assets/*` | Uploads via Decap CMS |
+| `public/og-default.jpg` | OG/Twitter (1200×630) |
 | `public/favicon.svg` | Favicon do cliente |
 
 ---
@@ -158,10 +158,10 @@ Sempre `font-display: swap` no `@font-face`.
 - [ ] Contraste de texto ≥ 4.5:1
 - [ ] `prefers-reduced-motion` respeitado
 
-### Automatizado (quando suíte existir)
+### Automatizado
 
 ```bash
-bun run test:e2e    # inclui axe-core + teclado
+bun run test:e2e    # axe-core + navegação por teclado (e2e/a11y/)
 bun run a11y        # pa11y-ci pós-build
 ```
 
@@ -182,9 +182,7 @@ bun run a11y        # pa11y-ci pós-build
 ## 7. Quality gates antes da entrega
 
 ```bash
-bun run build
-bun run test:e2e
-bun run lint
+bun run quality   # lint + build + e2e + a11y + lighthouse
 ```
 
 | Gate | Alvo |
@@ -219,5 +217,5 @@ Copie e adapte os arquivos em [`docs/templates/`](templates/):
 ## Referências
 
 - [`AGENTS.md`](../AGENTS.md) — instruções gerais para IA
-- [`PLANO-BOILERPLATE-CORPORATIVO.md`](PLANO-BOILERPLATE-CORPORATIVO.md) — roadmap completo
+- [`PLANO-BOILERPLATE-CORPORATIVO.md`](PLANO-BOILERPLATE-CORPORATIVO.md) — roadmap histórico (referência)
 - [`docs/guidelines/`](../guidelines/) — padrões de desenvolvimento

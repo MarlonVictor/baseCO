@@ -3,9 +3,9 @@
 
 ## Arquivos-chave
 
-- `apps/<app>/src/content/config.ts` — define collections e schemas Zod
-- `apps/<app>/src/content/homepage/home.json` — conteúdo da landing
-- `apps/<app>/public/admin/config.yml` — espelha campos para Decap CMS
+- `src/content/config.ts` — define collections e schemas Zod
+- `src/content/homepage/home.json` — conteúdo da landing
+- `public/admin/config.yml` — espelha campos para Decap CMS
 
 ## Regras
 
