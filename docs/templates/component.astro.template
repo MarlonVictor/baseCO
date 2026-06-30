@@ -1,0 +1,63 @@
+---
+/**
+ * NomeDoComponente.astro
+ * ----------------------
+ * [Descreva o propósito da seção em 1–2 frases.]
+ *
+ * Acessibilidade:
+ *  - [Liste requisitos WCAG específicos deste componente.]
+ *
+ * Hooks do Design System: .componente, .componente__title, .componente__cta
+ */
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+} = Astro.props;
+---
+
+<section
+  class="componente w-full"
+  aria-labelledby="componente-title"
+  data-section="componente"
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
+    {eyebrow && (
+      <p class="componente__eyebrow text-sm font-medium uppercase tracking-wider">
+        {eyebrow}
+      </p>
+    )}
+
+    <h2
+      id="componente-title"
+      class="componente__title mt-3 text-3xl font-bold"
+    >
+      {title}
+    </h2>
+
+    {description && (
+      <p class="componente__description mt-4 max-w-prose">
+        {description}
+      </p>
+    )}
+
+    <slot />
+  </div>
+</section>
+
+<!--
+  DESIGN SYSTEM HOOK
+  Estilize .componente, .componente__title, .componente__description no DS do cliente.
+-->
+
+<!--
+  ANIMAÇÃO
+  Script de entrada opcional — usar <script> como módulo, nunca is:inline no critical path.
+-->

@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/Layout.astro';
+import Header from '@repo/ui/Header.astro';
+import Hero from '@repo/ui/Hero.astro';
+import Features from '@repo/ui/Features.astro';
+import Testimonials from '@repo/ui/Testimonials.astro';
+import Contact from '@repo/ui/Contact.astro';
+import Footer from '@repo/ui/Footer.astro';
+import type { LocalBusinessSchema } from '@repo/seo/types';
+
+const homepageList = await getCollection('homepage');
+const home = homepageList.find((e) => e.id === 'home') ?? homepageList[0];
+if (!home) {
+  throw new Error('Conteúdo da homepage ausente: adicione src/content/homepage/home.json');
+}
+const { hero, services, contact } = home.data;
+
+const pageTitle = 'Seu Negócio — Soluções locais com excelência';
+const pageDescription =
+  'Empresa local especializada em [seu serviço] em São Paulo. Atendimento ágil, equipe certificada e garantia estendida. Solicite um orçamento.';
+
+const localBusiness: LocalBusinessSchema = {
+  type: 'LocalBusiness',
+  name: 'Seu Negócio',
+  url: 'https://exemplo.com.br',
+  image: 'https://exemplo.com.br/og-default.jpg',
+  logo: 'https://exemplo.com.br/favicon.svg',
+  description: pageDescription,
+  telephone: '+55-11-99999-9999',
+  priceRange: '$$',
+  address: {
+    streetAddress: 'Av. Paulista, 1000',
+    addressLocality: 'São Paulo',
+    addressRegion: 'SP',
+    postalCode: '01310-100',
+    addressCountry: 'BR',
+  },
+  geo: {
+    latitude: -23.5613,
+    longitude: -46.6565,
+  },
+  openingHours: ['Mo-Fr 09:00-18:00', 'Sa 09:00-13:00'],
+  sameAs: [
+    'https://instagram.com/seunegocio',
+    'https://facebook.com/seunegocio',
+  ],
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  siteName="Seu Negócio"
+  themeColor="#0f172a"
+  localBusiness={localBusiness}
+>
+  <Header />
+
+  <main id="main-content" role="main" class="flex-1" tabindex="-1">
+    <Hero title={hero.title} description={hero.subtitle} />
+    <Features features={services} />
+    <Testimonials />
+    <Contact
+      info={{
+        whatsapp: contact.whatsapp,
+        email: contact.email,
+        address: contact.address,
+      }}
+    />
+  </main>
+
+  <Footer />
+</Layout>

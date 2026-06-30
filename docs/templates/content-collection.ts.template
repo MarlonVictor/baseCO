@@ -1,0 +1,33 @@
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+/**
+ * Template para nova Content Collection.
+ *
+ * Passos após criar:
+ *  1. Exportar em `export const collections = { ..., nomeCollection }`
+ *  2. Criar JSON de exemplo em src/content/<nome>/
+ *  3. Espelhar campos em public/admin/config.yml
+ */
+const nomeCollection = defineCollection({
+  loader: glob({
+    base: 'src/content/nome-da-collection',
+    pattern: '**/*.json',
+    generateId: ({ entry }) => entry.replace(/\.json$/u, '').replaceAll('/', '-'),
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    items: z.array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+    ),
+  }),
+});
+
+export const collections = {
+  // homepage,  // collections existentes
+  nomeCollection,
+};
