@@ -4,41 +4,20 @@
  * URLs coletadas automaticamente de dist/ (todas as páginas públicas).
  */
 
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   discoverDistRoutes,
   routeToDistUrl,
 } from "../testing/discover-routes.ts";
+import { resolvePlaywrightChromium } from "../testing/playwright-chrome.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST_INDEX = path.join(ROOT, "dist/index.html");
 
-function findPlaywrightChromium(): string | undefined {
-  const base = path.join(homedir(), ".cache/ms-playwright");
-  if (!existsSync(base)) return undefined;
-
-  const versions = readdirSync(base)
-    .filter((name) => name.startsWith("chromium-"))
-    .sort()
-    .reverse();
-
-  for (const version of versions) {
-    const candidate = path.join(base, version, "chrome-linux/chrome");
-    if (existsSync(candidate)) return candidate;
-  }
-
-  return undefined;
-}
-
 function resolveChromePath(): string {
-  if (process.env.CHROME_PATH && existsSync(process.env.CHROME_PATH)) {
-    return process.env.CHROME_PATH;
-  }
-
-  const playwrightChrome = findPlaywrightChromium();
+  const playwrightChrome = resolvePlaywrightChromium();
   if (playwrightChrome) return playwrightChrome;
 
   console.error(

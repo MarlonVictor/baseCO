@@ -3,35 +3,19 @@
  * validate-a11y.ts — pa11y-ci contra o site buildado (preview local).
  */
 
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   discoverDistRoutes,
   routeToPreviewUrl,
 } from "../testing/discover-routes.ts";
+import { resolvePlaywrightChromium } from "../testing/playwright-chrome.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PREVIEW_URL = "http://localhost:4322";
 const PREVIEW_PORT = 4322;
 const DIST_INDEX = path.join(ROOT, "dist/index.html");
-
-function findPlaywrightChromium(): string | undefined {
-  const base = path.join(process.env.HOME ?? "", ".cache/ms-playwright");
-  if (!existsSync(base)) return undefined;
-
-  const versions = readdirSync(base)
-    .filter((name) => name.startsWith("chromium-"))
-    .sort()
-    .reverse();
-
-  for (const version of versions) {
-    const candidate = path.join(base, version, "chrome-linux/chrome");
-    if (existsSync(candidate)) return candidate;
-  }
-
-  return undefined;
-}
 
 async function waitForServer(url: string, timeoutMs = 60_000): Promise<void> {
   const start = Date.now();
@@ -84,7 +68,7 @@ async function main(): Promise<void> {
     console.log("▶ Executando pa11y-ci...");
     const pa11yConfig = path.join(ROOT, ".pa11yci.json");
     const pa11yBin = path.join(ROOT, "node_modules/.bin/pa11y-ci");
-    const chromePath = process.env.CHROME_PATH ?? findPlaywrightChromium();
+    const chromePath = resolvePlaywrightChromium();
 
     const pa11y = Bun.spawn([pa11yBin, "--config", pa11yConfig, ...urls], {
       cwd: ROOT,
