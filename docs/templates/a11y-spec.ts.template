@@ -1,26 +1,21 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { assertNoA11yViolations } from '../helpers/axe-setup';
 
 /**
  * Substitua:
  *  - NomeDaPagina pelo nome da rota testada
- *  - '/' pela URL da página
- *  - Seletores conforme o conteúdo real do cliente
+ *  - '/caminho' pela URL da página
+ *  - Seletores e cenários de teclado conforme o componente
  */
 test.describe('Acessibilidade — NomeDaPagina', () => {
+  const pagePath = '/caminho';
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto(pagePath);
   });
 
   test('sem violações WCAG 2.2 AA (axe-core)', async ({ page }) => {
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-      .analyze();
-
-    expect(
-      results.violations,
-      JSON.stringify(results.violations, null, 2),
-    ).toEqual([]);
+    await assertNoA11yViolations(page);
   });
 
   test('landmarks estruturais', async ({ page }) => {

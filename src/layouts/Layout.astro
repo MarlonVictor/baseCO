@@ -7,11 +7,12 @@
  * com defaults sensatos para uso rápido em qualquer página.
  */
 
-import '~/styles/global.css';
-import '~/styles/a11y.css';
-import SkipLink from '~/components/primitives/SkipLink.astro';
-import LocalBusinessJsonLd from '~/seo/LocalBusinessJsonLd.astro';
-import type { LocalBusinessSchema } from '~/seo/types';
+import "~/styles/global.css";
+import "~/styles/a11y.css";
+import "~/styles/dialog.css";
+import SkipLink from "~/components/primitives/SkipLink.astro";
+import LocalBusinessJsonLd from "~/seo/LocalBusinessJsonLd.astro";
+import type { LocalBusinessSchema } from "~/seo/types";
 
 export type { LocalBusinessSchema };
 
@@ -29,7 +30,7 @@ export interface Props {
   /** Imagem para Open Graph / Twitter. Caminho absoluto ou relativo. */
   image?: string;
   /** Tipo do Open Graph. */
-  type?: 'website' | 'article' | 'product';
+  type?: "website" | "article" | "product";
   /** Nome do site (og:site_name). */
   siteName?: string;
   /** Bloqueia indexação por crawlers. */
@@ -44,28 +45,32 @@ const {
   title,
   description,
   canonical,
-  lang = 'pt-BR',
+  lang = "pt-BR",
   ogLocale,
   // NOTA: SVG é apenas placeholder. Para produção use /og-default.jpg (1200x630)
   // — alguns crawlers (LinkedIn, WhatsApp) ignoram OG image em SVG.
-  image = '/og-default.jpg',
-  type = 'website',
-  siteName = 'Seu Negócio',
+  image = "/og-default.jpg",
+  type = "website",
+  siteName = "Seu Negócio",
   noindex = false,
-  themeColor = '#ffffff',
+  themeColor = "#ffffff",
   localBusiness,
 } = Astro.props;
 
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const canonicalUrl =
+  canonical ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 const ogImage = new URL(image, Astro.site ?? Astro.url).toString();
-const ogLocaleResolved = ogLocale ?? lang.replace('-', '_');
+const ogLocaleResolved = ogLocale ?? lang.replace("-", "_");
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content={themeColor} />
 
@@ -74,7 +79,11 @@ const ogLocaleResolved = ogLocale ?? lang.replace('-', '_');
     <link rel="canonical" href={canonicalUrl} />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    {!noindex && <meta name="robots" content="index, follow, max-image-preview:large" />}
+    {
+      !noindex && (
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+      )
+    }
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

@@ -1,11 +1,10 @@
-
-# SEO Base — Boilerplate Corporativo
+# baseCO — Boilerplate Corporativo
 
 Landing pages estáticas para pequenos negócios. Leia `AGENTS.md` e `docs/NEW-LANDING-GUIDE.md` para visão completa.
 
 ## Modelo: template copiável
 
-Este repositório é um **boilerplate único** — ao fechar um cliente, **copie o repo inteiro** para um novo repositório e customize lá. Não é monorepo multi-cliente.
+Este repositório é um **boilerplate único** — ao fechar um cliente, **copie o repo inteiro** para um novo repositório e customize lá.
 
 ## Stack
 
@@ -26,19 +25,19 @@ Este repositório é um **boilerplate único** — ao fechar um cliente, **copie
 
 ## Metas obrigatórias (quality gates)
 
-| Métrica | Alvo |
-|---------|------|
-| Lighthouse (Performance, A11y, Best Practices, SEO) | ≥ 95 cada |
-| LCP | ≤ 1.8s |
-| CLS | ≤ 0.02 |
-| WCAG | 2.2 Nível AA |
-| axe-core em e2e | 0 violações |
+| Métrica                                             | Alvo         |
+| --------------------------------------------------- | ------------ |
+| Lighthouse (Performance, A11y, Best Practices, SEO) | ≥ 95 cada    |
+| LCP                                                 | ≤ 1.8s       |
+| CLS                                                 | ≤ 0.02       |
+| WCAG                                                | 2.2 Nível AA |
+| axe-core em e2e                                     | 0 violações  |
 
 ## Princípios inegociáveis
 
 1. **Separação conteúdo × visual** — Textos em JSON; estilos via hooks CSS no Design System do cliente.
 2. **Progressive enhancement** — Site funcional sem JS; interatividade via islands sob demanda.
-3. **Zero regressão** — Toda feature nova exige teste e2e e passagem em axe-core.
+3. **Zero regressão** — Toda feature nova exige `bun run quality`; rotas estáticas são auditadas automaticamente (axe, SEO, Lighthouse, pa11y).
 4. **Semântica preservada** — Nunca quebrar landmarks, headings ou JSON-LD ao aplicar visual.
 
 ## O que NÃO fazer

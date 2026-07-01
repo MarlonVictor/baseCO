@@ -29,6 +29,9 @@ jobs:
       - name: Lint
         run: bun run lint
 
+      - name: Astro check
+        run: bun run check
+
       - name: Build
         run: bun run build
 

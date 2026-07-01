@@ -1,15 +1,17 @@
-# Plano de Evolução — Boilerplate Monorepo Corporativo de Alta Performance
+# Plano de Evolução — Boilerplate Template Copiável de Alta Performance
 
-> **Nota (2026):** O repositório evoluiu para **template copiável** (um Astro app na raiz, sem Turborepo/workspaces). Este documento permanece como referência histórica do roadmap; para a estrutura atual, consulte `AGENTS.md` e `docs/NEW-LANDING-GUIDE.md`.
+> **Objetivo:** Manter o **baseCO** como **template copiável** — um app Astro na raiz, duplicado por cliente — com **Lighthouse ≥ 95** em todas as categorias, acessibilidade WCAG 2.2 AA validada automaticamente, suítes e2e completas e **instruções para IA** que garantam consistência em cada nova landing.
 
-> **Objetivo:** Transformar o `seo-base` (Astro 5 + Tailwind + Decap CMS) em um boilerplate corporativo reutilizável para landing pages de pequenos negócios, com **Lighthouse > 95 em todas as categorias**, acessibilidade WCAG 2.2 AA validada automaticamente, monorepo escalável e suítes de testes e2e completas — incluindo **instruções para IA** que garantam consistência em cada nova implementação.
+> **Modelo de trabalho:** ao fechar um cliente, **copie este repositório inteiro** para um novo repo e customize lá.
+
+**Documentos operacionais:** [`AGENTS.md`](../AGENTS.md) · [`NEW-LANDING-GUIDE.md`](NEW-LANDING-GUIDE.md) · [`docs/guidelines/`](guidelines/)
 
 ---
 
 ## Índice
 
 1. [Visão Geral e Estado Atual](#1-visão-geral-e-estado-atual)
-2. [Arquitetura Alvo do Monorepo](#2-arquitetura-alvo-do-monorepo)
+2. [Arquitetura do Template Copiável](#2-arquitetura-do-template-copiável)
 3. [Core Web Vitals e Lighthouse > 95](#3-core-web-vitals-e-lighthouse--95)
 4. [Code-Splitting e Lazy Loading](#4-code-splitting-e-lazy-loading)
 5. [Acessibilidade (WCAG 2.2 AA)](#5-acessibilidade-wcag-22-aa)
@@ -26,150 +28,95 @@
 
 ### O que já existe
 
-| Área | Status atual | Gap para o alvo |
-|------|--------------|-----------------|
-| **Framework** | Astro 5 estático, Sharp, compressHTML | Falta budget de performance, relatórios Lighthouse automatizados |
-| **SEO** | JSON-LD LocalBusiness, meta-tags dinâmicas, canonical | OG image ainda em SVG (trocar por JPG/WebP 1200×630) |
-| **Acessibilidade** | Skip link, landmarks, ARIA no menu mobile, `prefers-reduced-motion` | Sem auditoria automatizada, sem testes de teclado |
-| **Performance** | `loading="eager"` + `fetchpriority="high"` no Hero LCP | Sem lazy loading de seções abaixo da dobra, sem code-splitting explícito |
-| **Testes** | Nenhum | Zero cobertura e2e, zero axe-core |
-| **Monorepo** | Repositório único | Sem workspaces, sem pacotes compartilhados, sem Turborepo/Nx |
-| **IA / Padrões** | Comentários nos componentes | `docs/guidelines/`, `AGENTS.md`, templates |
+| Área                | Status | Observação                                                                         |
+| ------------------- | ------ | ---------------------------------------------------------------------------------- |
+| **Framework**       | ✅     | Astro 5 estático, Sharp, `compressHTML`, `@astrojs/sitemap`                        |
+| **SEO**             | ✅     | JSON-LD, meta-tags, canonical, sitemap, `robots.txt`                               |
+| **OG image**        | ✅     | `public/og-default.jpg` (1200×630)                                                 |
+| **Acessibilidade**  | ✅     | Skip link, landmarks, menu mobile, focus trap, `Button`/`Dialog`, `aria-current`   |
+| **Hero LCP**        | ✅     | Raster WebP via `astro:assets` (`src/assets/hero.webp`)                            |
+| **Lazy loading**    | ✅     | `LazySection.astro`, island `MobileMenu` com `client:media`                        |
+| **Testes e2e**      | ✅     | Playwright, axe-core, teclado, SEO, fluxos, visual                                 |
+| **Lighthouse CI**   | ✅     | `lighthouserc.json`, `testing/lighthouse-budget.json`, `scripts/run-lighthouse.ts` |
+| **pa11y-ci**        | ✅     | `scripts/validate-a11y.ts`, `.pa11yci.json`                                        |
+| **CI**              | ✅     | `.github/workflows/quality.yml` (Bun)                                              |
+| **Guidelines + IA** | ✅     | `AGENTS.md`, `docs/guidelines/`, `docs/templates/`                                 |
+| **Lint / format**   | ✅     | ESLint 9 + jsx-a11y + Prettier + Husky pre-commit                                  |
+| **Deploy**          | ✅     | `docs/DEPLOY.md` (Netlify, Cloudflare, Vercel)                                     |
+
+Legenda: ✅ concluído · ⏳ parcial ou pendente
 
 ### Princípios do boilerplate
 
-1. **Zero regressão** — Toda PR deve passar por quality gates (Lighthouse, axe, e2e).
-2. **Separação conteúdo × visual** — Conteúdo em Content Collections; visual via Design System externo (hooks CSS já existentes).
-3. **Progressive enhancement** — Site funcional sem JS; interatividade carregada sob demanda.
-4. **IA como co-desenvolvedora** — Regras explícitas para que agentes sigam os mesmos padrões em cada landing nova.
+1. **Zero regressão** — Toda entrega deve passar `bun run quality`.
+2. **Separação conteúdo × visual** — Conteúdo em Content Collections; visual via Design System externo (hooks CSS).
+3. **Progressive enhancement** — Site funcional sem JS; interatividade via islands sob demanda.
+4. **IA como co-desenvolvedora** — Regras explícitas em `AGENTS.md` e `docs/guidelines/`.
+5. **Um repo por cliente** — Duplicar o template; não acumular clientes no mesmo repositório.
 
 ---
 
-## 2. Arquitetura Alvo do Monorepo
+## 2. Arquitetura do Template Copiável
 
-### Decisão: Turborepo (recomendado)
+### Modelo
 
-| Critério | Turborepo | Nx |
-|----------|-----------|-----|
-| Curva de aprendizado | Baixa | Média-alta |
-| Adequação ao stack Astro estático | Excelente | Excelente, mas mais opinativo |
-| Cache remoto | Sim (Vercel) | Sim (Nx Cloud) |
-| Overhead para LP simples | Mínimo | Maior (plugins, generators) |
-| Integração Bun/pnpm | Nativa | Nativa |
+**Template copiável** — um cliente, um repositório, customização livre. Duplique o repo e customize conteúdo + visual.
 
-**Recomendação:** **Turborepo** com **pnpm workspaces** (ou Bun workspaces, mantendo compatibilidade). Nx só se no futuro houver apps React Native, backends NestJS ou necessidade de generators complexos.
-
-### Estrutura de diretórios proposta
+### Estrutura de diretórios
 
 ```
-seo-base/                              # raiz do monorepo
-├── apps/
-│   ├── template-landing/              # app atual migrado (referência)
-│   │   ├── src/
-│   │   ├── public/
-│   │   ├── astro.config.mjs
-│   │   └── package.json
-│   └── storybook/                     # (opcional Fase 3) catálogo de componentes
-│
-├── packages/
-│   ├── ui/                            # componentes Astro compartilhados
-│   │   ├── src/
-│   │   │   ├── Header.astro
-│   │   │   ├── Hero.astro
-│   │   │   ├── primitives/            # Button, Link, SkipLink, VisuallyHidden
-│   │   │   └── index.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   ├── seo/                           # JSON-LD, meta helpers, sitemap utils
-│   │   ├── src/
-│   │   │   ├── LocalBusinessJsonLd.astro
-│   │   │   ├── schemas/
-│   │   │   └── utils/
-│   │   └── package.json
-│   │
-│   ├── content-schemas/               # Zod schemas compartilhados (homepage, blog, etc.)
-│   │   └── package.json
-│   │
-│   ├── config/                        # configs compartilhadas
-│   │   ├── eslint/
-│   │   ├── tailwind/
-│   │   ├── typescript/
-│   │   └── lighthouse/
-│   │
-│   └── testing/                       # utilitários de teste compartilhados
-│       ├── axe-setup.ts
-│       ├── keyboard-helpers.ts
-│       └── lighthouse-budget.json
-│
-├── tooling/
-│   ├── scripts/
-│   │   ├── scaffold-landing.ts        # CLI para nova LP de cliente
-│   │   └── validate-a11y.ts
-│   └── github-actions/                # workflows reutilizáveis
-│
+baseCO/                         # copiar este repo para cada cliente
+├── src/
+│   ├── components/             # Header, Hero, Features, LazySection, primitives/, islands/
+│   ├── seo/                    # LocalBusinessJsonLd.astro, types.ts
+│   ├── layouts/                # Layout.astro
+│   ├── pages/                  # Rotas Astro
+│   ├── content/                # JSON + schemas Zod (Decap CMS)
+│   ├── styles/                 # global.css, a11y.css
+│   └── assets/                 # Imagens (astro:assets)
+├── e2e/
+│   ├── helpers/                # axe-setup.ts, seo-assertions.ts
+│   ├── a11y/                   # all-routes.spec.ts, keyboard-nav.spec.ts
+│   └── seo/                    # all-routes.spec.ts, robots.spec.ts
+├── public/
+│   ├── admin/                  # Decap CMS
+│   ├── assets/uploads/
+│   └── og-default.jpg
+├── scripts/
+│   ├── run-lighthouse.ts
+│   └── validate-a11y.ts
+├── testing/
+│   └── lighthouse-budget.json
 ├── docs/
-│   ├── guidelines/                 # Padrões de desenvolvimento
-│   ├── PLANO-BOILERPLATE-CORPORATIVO.md   # este arquivo
-│   ├── PERFORMANCE.md
-│   ├── ACCESSIBILITY.md
-│   └── NEW-LANDING-GUIDE.md
-│
-├── AGENTS.md                          # contexto global para agentes de IA
-├── turbo.json
-├── pnpm-workspace.yaml
-├── package.json
-└── README.md
+│   ├── guidelines/
+│   ├── templates/
+│   ├── NEW-LANDING-GUIDE.md
+│   └── PLANO-BOILERPLATE-CORPORATIVO.md
+├── .github/workflows/quality.yml
+├── AGENTS.md
+├── astro.config.mjs
+├── playwright.config.ts
+├── lighthouserc.json
+├── .pa11yci.json
+├── eslint.config.js
+├── tailwind.config.mjs
+└── package.json
 ```
 
-### Configuração Turborepo (`turbo.json`)
-
-```json
-{
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^build"]
-    },
-    "test": {
-      "dependsOn": ["build"]
-    },
-    "test:e2e": {
-      "dependsOn": ["build"]
-    },
-    "lighthouse": {
-      "dependsOn": ["build"],
-      "outputs": ["reports/lighthouse/**"]
-    },
-    "a11y": {
-      "dependsOn": ["build"]
-    }
-  }
-}
-```
-
-### Scripts raiz (`package.json`)
+### Scripts (`package.json`)
 
 ```json
 {
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "test": "turbo test",
-    "test:e2e": "turbo test:e2e",
-    "lighthouse": "turbo lighthouse",
-    "a11y": "turbo a11y",
-    "scaffold:landing": "bun tooling/scripts/scaffold-landing.ts",
-    "quality": "turbo lint test test:e2e lighthouse a11y"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "preview:e2e": "astro build && astro preview --port 4321",
+    "lint": "eslint src/ e2e/ scripts/",
+    "test:e2e": "playwright test",
+    "lighthouse": "bun scripts/run-lighthouse.ts",
+    "a11y": "bun scripts/validate-a11y.ts",
+    "quality": "bun run lint && bun run build && bun run test:e2e && bun run a11y && bun run lighthouse"
   }
 }
 ```
@@ -178,13 +125,15 @@ seo-base/                              # raiz do monorepo
 
 ```mermaid
 flowchart LR
-    A[scaffold:landing] --> B[apps/cliente-x]
-    B --> C[Customizar content + DS]
-    C --> D[quality gate local]
+    A[Duplicar repo baseCO] --> B[Novo repositório do cliente]
+    B --> C[Customizar content + Design System]
+    C --> D[bun run quality]
     D --> E{Passou?}
     E -->|Sim| F[Deploy]
     E -->|Não| C
 ```
+
+Passo a passo detalhado: [`NEW-LANDING-GUIDE.md`](NEW-LANDING-GUIDE.md).
 
 ---
 
@@ -192,84 +141,63 @@ flowchart LR
 
 ### Metas por métrica
 
-| Métrica | Alvo (campo) | Alvo (lab/Lighthouse) | Responsável técnico |
-|---------|--------------|----------------------|---------------------|
-| **LCP** | ≤ 2.0s | ≤ 1.8s | Hero image, fontes, SSR estático |
-| **INP** | ≤ 150ms | ≤ 100ms | JS mínimo, islands sob demanda |
-| **CLS** | ≤ 0.05 | ≤ 0.02 | dimensões explícitas, font-display |
-| **FCP** | ≤ 1.5s | ≤ 1.2s | CSS crítico inline, preconnect |
-| **TTFB** | ≤ 600ms | CDN + estático | Hospedagem (Netlify/Cloudflare) |
-| **Lighthouse Performance** | — | ≥ 95 | Todas as otimizações abaixo |
-| **Lighthouse Accessibility** | — | ≥ 95 | Seção 5 e 6 |
-| **Lighthouse Best Practices** | — | ≥ 95 | HTTPS, imagens, console limpo |
-| **Lighthouse SEO** | — | ≥ 95 | Já forte; reforçar OG image raster |
+| Métrica                       | Alvo (campo) | Alvo (lab/Lighthouse) | Responsável técnico                |
+| ----------------------------- | ------------ | --------------------- | ---------------------------------- |
+| **LCP**                       | ≤ 2.0s       | ≤ 1.8s                | Hero image, fontes, build estático |
+| **INP**                       | ≤ 150ms      | ≤ 100ms               | JS mínimo, islands sob demanda     |
+| **CLS**                       | ≤ 0.05       | ≤ 0.02                | dimensões explícitas, font-display |
+| **FCP**                       | ≤ 1.5s       | ≤ 1.2s                | CSS crítico inline, preconnect     |
+| **TTFB**                      | ≤ 600ms      | CDN + estático        | Hospedagem (Netlify/Cloudflare)    |
+| **Lighthouse (4 categorias)** | —            | ≥ 95 cada             | Seções 3–6 + quality gates         |
 
 ### 3.1 LCP (Largest Contentful Paint)
 
 **Ações concretas:**
 
-1. **Hero image**
-   - Migrar de SVG para **AVIF/WebP raster** (1200px largura máx.) via `astro:assets`.
-   - Manter `loading="eager"`, `fetchpriority="high"`, `decoding="async"`.
-   - Adicionar `width` e `height` explícitos para reservar espaço (anti-CLS).
-
-2. **Preload do LCP**
-   ```html
-   <link rel="preload" as="image" href="/_assets/hero-800w.avif"
-         imagesrcset="..." imagesizes="(min-width: 768px) 50vw, 100vw" />
-   ```
-
-3. **Fontes**
-   - `font-display: swap` obrigatório.
-   - Subset WOFF2 apenas com glifos usados (latin + acentos pt-BR).
-   - `preconnect` para origem de fontes no `Layout.astro` (bloco já reservado).
-
-4. **CSS crítico**
-   - Manter `inlineStylesheets: 'auto'` no `astro.config.mjs`.
-   - Avaliar `@astrojs/critters` ou inline manual do CSS above-the-fold (Header + Hero).
+1. **Hero image** — ✅ raster WebP em `src/assets/hero.webp` (substituir por foto do cliente).
+2. Manter `loading="eager"`, `fetchpriority="high"`, `decoding="async"`.
+3. `width` e `height` explícitos para reservar espaço (anti-CLS).
+4. **Fontes** — `font-display: swap`, subset WOFF2, `preconnect` no `Layout.astro`.
+5. **CSS crítico** — `inlineStylesheets: 'auto'` no `astro.config.mjs`.
 
 ### 3.2 INP (Interaction to Next Paint)
 
-**Ações concretas:**
-
-1. **Islands Architecture** — Menu mobile, formulário de contato e animações como Astro Islands com `client:visible` ou `client:idle`.
+1. **Islands** — Menu mobile com `client:media="(max-width: 768px)"`.
 2. **Zero JS no critical path** — Nenhum `<script>` bloqueante no `<head>`.
-3. **Event delegation** — Um listener por tipo de evento, não por elemento.
-4. **Debounce em inputs** — Se houver validação em tempo real no formulário.
+3. Event delegation e debounce em validações de formulário, se houver.
 
 ### 3.3 CLS (Cumulative Layout Shift)
 
-**Ações concretas:**
-
-1. `width`/`height` em **todas** as imagens e iframes.
+1. `width`/`height` em todas as imagens e iframes.
 2. `aspect-ratio` CSS em containers de mídia.
-3. Reservar espaço para banners de cookie (se adicionados no futuro).
-4. Evitar injeção de conteúdo acima da dobra após load (ads, popups).
+3. Evitar injeção de conteúdo acima da dobra após load.
 
 ### 3.4 Otimizações de build e entrega
 
-| Técnica | Implementação |
-|---------|---------------|
-| Compressão Brotli/Gzip | Netlify/Cloudflare (automático) |
-| Cache headers | `Cache-Control: public, max-age=31536000, immutable` para `/_assets/*` |
-| HTTP/2 ou HTTP/3 | CDN padrão |
-| `compressHTML: true` | Já ativo |
-| Tree-shaking | Vite (padrão Astro) |
-| Purge CSS | Tailwind `content` apontando para todos os pacotes do monorepo |
-| Sitemap + robots.txt | `@astrojs/sitemap` no pacote `seo` |
-| Resource hints | `preconnect`, `dns-prefetch` para analytics (se houver) |
+| Técnica                | Implementação                                                   |
+| ---------------------- | --------------------------------------------------------------- |
+| Compressão Brotli/Gzip | Netlify/Cloudflare (automático)                                 |
+| Cache headers          | `immutable` para `/_assets/*`                                   |
+| `compressHTML: true`   | Ativo no Astro                                                  |
+| Tree-shaking           | Vite (padrão Astro)                                             |
+| Purge CSS              | Tailwind `content` apontando para `src/**/*.{astro,html,js,ts}` |
+| Sitemap                | `@astrojs/sitemap` ✅                                           |
+| robots.txt             | ✅ `public/robots.txt`                                          |
+| Resource hints         | `preconnect` para fontes no Layout                              |
 
 ### 3.5 Lighthouse CI e Performance Budget
 
-**Pacote:** `@lhci/cli` + config em `packages/config/lighthouse/`
+**Config:** `lighthouserc.json` na raiz · budget em `testing/lighthouse-budget.json`
 
 ```json
-// lighthouserc.json
 {
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "numberOfRuns": 3
+      "numberOfRuns": 3,
+      "settings": {
+        "budgets": "./testing/lighthouse-budget.json"
+      }
     },
     "assert": {
       "assertions": {
@@ -286,7 +214,7 @@ flowchart LR
 }
 ```
 
-**Script:** `packages/testing/lighthouse-budget.json` para limites de tamanho de bundle:
+**Budget de recursos** (`testing/lighthouse-budget.json`):
 
 ```json
 [
@@ -297,112 +225,71 @@ flowchart LR
 ]
 ```
 
+Execução local: `bun run lighthouse`
+
 ---
 
 ## 4. Code-Splitting e Lazy Loading
 
 ### Estratégia por camada (Astro)
 
-Astro já faz **split automático por rota** e por **island**. O plano formaliza quando usar cada padrão.
+Astro faz **split automático por rota** e por **island**. O plano formaliza quando usar cada padrão.
 
-### 4.1 Rotas e páginas
+### 4.1 Componentes estáticos (`.astro`)
 
-```astro
----
-// Cada página em src/pages/ gera chunk próprio automaticamente.
-// Para LP multi-página (ex: /, /servicos, /contato):
-// importar apenas o necessário por página — nunca barrel import global.
----
-```
-
-### 4.2 Componentes estáticos (`.astro`)
-
-| Componente | Estratégia | Motivo |
-|------------|-----------|--------|
-| `Header`, `Hero` | Import estático | Above the fold |
-| `Features` | Import estático | Visível cedo em mobile |
-| `Testimonials` | `import()` dinâmico ou wrapper lazy | Abaixo da dobra |
-| `Contact` | Island `client:visible` se tiver validação JS | Interatividade |
-| `Footer` | Import estático | Leve, sempre presente |
+| Componente       | Estratégia                                       | Motivo                  |
+| ---------------- | ------------------------------------------------ | ----------------------- |
+| `Header`, `Hero` | Import estático                                  | Above the fold          |
+| `Features`       | Import estático                                  | Visível cedo em mobile  |
+| `Testimonials`   | `LazySection` ou import dinâmico                 | Abaixo da dobra         |
+| `Contact`        | Estático (form nativo) ou island se validação JS | Interatividade opcional |
+| `Footer`         | Import estático                                  | Leve, sempre presente   |
 
 **Padrão para seções below-the-fold:**
 
 ```astro
 ---
-const Testimonials = (await import('~/components/Testimonials.astro')).default;
+import LazySection from "~/components/LazySection.astro";
+import Testimonials from "~/components/Testimonials.astro";
 ---
-```
 
-Ou, preferencialmente no monorepo:
-
-```astro
----
-import LazySection from '@repo/ui/LazySection.astro';
----
 <LazySection>
   <Testimonials />
 </LazySection>
 ```
 
-`LazySection.astro` usa `IntersectionObserver` para renderizar o slot apenas quando visível (útil para listas pesadas).
+`LazySection.astro` usa `IntersectionObserver` para renderizar o slot quando visível.
 
-### 4.3 Astro Islands (componentes interativos)
-
-Quando adicionar React/Vue/Svelte para interatividade:
+### 4.2 Astro Islands (componentes interativos)
 
 ```astro
 ---
-import MobileMenu from '@repo/ui/islands/MobileMenu.tsx';
+import MobileMenuIsland from "~/components/islands/MobileMenuIsland.astro";
 ---
-<MobileMenu client:media="(max-width: 768px)" />
+
+<MobileMenuIsland client:media="(max-width: 768px)" />
 ```
 
-| Diretiva | Uso |
-|----------|-----|
-| `client:load` | Evitar — só se crítico para UX imediata |
-| `client:idle` | Menu, toggles secundários |
-| `client:visible` | Carrosséis, formulários, mapas |
-| `client:media` | Menu mobile (carrega JS só em viewport pequeno) |
-| `client:only` | Último recurso (sem SSR do componente) |
+| Diretiva         | Uso                                     |
+| ---------------- | --------------------------------------- |
+| `client:load`    | Evitar — só se crítico para UX imediata |
+| `client:idle`    | Toggles secundários                     |
+| `client:visible` | Carrosséis, formulários, mapas          |
+| `client:media`   | Menu mobile ✅                          |
+| `client:only`    | Último recurso                          |
 
-### 4.4 Imagens
-
-```astro
-<Image
-  src={photo}
-  alt="..."
-  loading="lazy"          <!-- default para não-LCP -->
-  decoding="async"
-  widths={[400, 800, 1200]}
-  sizes="..."
-/>
-```
+### 4.3 Imagens
 
 Regra: **apenas 1 imagem com `loading="eager"` por página** (candidata LCP).
 
-### 4.5 Fontes e CSS
+### 4.4 Fontes e CSS
 
-- Importar CSS de animações apenas em componentes que as usam.
-- Design System do cliente: carregar via `<link rel="stylesheet" media="print" onload="...">` para CSS não-crítico (com fallback `<noscript>`).
+- Design System do cliente no bloco **DESIGN SYSTEM OVERRIDES** de `src/styles/global.css`.
+- CSS não-crítico via `<link rel="stylesheet" media="print" onload="...">` com fallback `<noscript>`.
 
-### 4.6 Scripts de terceiros
+### 4.5 Scripts de terceiros
 
-```astro
-<!-- Analytics: carregar após interação ou idle -->
-<script>
-  function loadAnalytics() {
-    const s = document.createElement('script');
-    s.src = 'https://...';
-    s.async = true;
-    document.head.appendChild(s);
-  }
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(loadAnalytics);
-  } else {
-    setTimeout(loadAnalytics, 3000);
-  }
-</script>
-```
+Carregar analytics após `requestIdleCallback` ou timeout — nunca bloqueante no `<head>`.
 
 ---
 
@@ -410,83 +297,50 @@ Regra: **apenas 1 imagem com `loading="eager"` por página** (candidata LCP).
 
 ### Nível alvo
 
-**WCAG 2.2 Nível AA** (com aspiração AAA em contraste de texto principal).
+**WCAG 2.2 Nível AA** (aspiração AAA em contraste do texto principal).
 
 ### 5.1 Checklist por componente
 
 #### Layout global (`Layout.astro`)
 
 - [x] `lang` no `<html>`
-- [x] Skip link funcional
-- [ ] `<title>` único por página
-- [ ] Ordem de foco lógica (tab order)
-- [ ] `color-scheme` meta para dark/light se aplicável
+- [x] Skip link funcional (`SkipLink.astro`)
+- [x] `<title>` único por página
+- [x] `prefers-reduced-motion` em `global.css`
 
 #### Header / Navegação
 
 - [x] `aria-expanded`, `aria-controls` no menu mobile
-- [ ] `aria-current="page"` no link ativo
-- [ ] Trap de foco no menu mobile aberto
-- [ ] Fechar menu com `Escape`
-- [ ] Landmark `<nav aria-label="Principal">`
+- [x] Focus trap no menu aberto
+- [x] Fechar menu com `Escape`
+- [x] Landmark `<nav aria-label="Principal">`
+- [x] `aria-current="page"` no link ativo
 
 #### Hero
 
 - [x] `aria-labelledby` na section
 - [x] `h1` único por página
-- [x] `aria-label` em CTAs quando o texto não é autoexplicativo
-- [ ] Contraste mínimo 4.5:1 (texto) / 3:1 (grande)
-
-#### Features / Testimonials
-
-- [ ] Listas com `<ul>`/`<li>` semânticos
-- [ ] Ícones decorativos com `aria-hidden="true"`
-- [ ] Ícones informativos com texto alternativo
-- [ ] Carrossel (se houver): `role="region"`, `aria-roledescription="carrossel"`, botões prev/next
+- [x] `aria-label` em CTAs quando necessário
 
 #### Contact / Formulário
 
-- [ ] Todo `<input>` com `<label>` associado (`for`/`id`)
-- [ ] Mensagens de erro com `aria-describedby` + `aria-invalid`
-- [ ] Agrupamento com `<fieldset>` + `<legend>` quando aplicável
-- [ ] Foco visível em todos os controles (`:focus-visible`)
-- [ ] Não depender apenas de cor para indicar estado
+- [x] Labels associados (`for`/`id`)
+- [ ] Mensagens de erro com `aria-describedby` + `aria-invalid` (quando houver validação JS)
+- [x] Foco visível (`:focus-visible` em `a11y.css`)
 
-#### Footer
+### 5.2 Tokens de acessibilidade
 
-- [ ] Links com texto descritivo (evitar "clique aqui")
-- [ ] Informações de contato em formato legível por leitores de tela
+Arquivo: `src/styles/a11y.css` — foco visível, utilitários sr-only, reduced motion.
 
-### 5.2 Tokens de acessibilidade no Design System
+### 5.3 Primitivos a11y (`src/components/primitives/`)
 
-Criar em `packages/ui/styles/a11y.css`:
-
-```css
-/* Foco visível global — nunca remover outline sem substituto */
-:focus-visible {
-  outline: 2px solid var(--color-focus, #2563eb);
-  outline-offset: 2px;
-}
-
-/* Classe utilitária sr-only (já usada via Tailwind) */
-/* Respeitar prefers-reduced-motion — já parcialmente no global.css */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-```
-
-### 5.3 Primitivos a11y reutilizáveis (`packages/ui/primitives/`)
-
-| Primitivo | Função |
-|-----------|--------|
-| `SkipLink.astro` | Extrair do Layout |
-| `VisuallyHidden.astro` | Texto só para leitores de tela |
-| `Button.astro` | `<button>` vs `<a>` correto, estados disabled |
-| `Dialog.astro` | Modal com focus trap + Escape |
-| `LiveRegion.astro` | `aria-live` para feedback dinâmico |
+| Primitivo              | Status | Função                                        |
+| ---------------------- | ------ | --------------------------------------------- |
+| `SkipLink.astro`       | ✅     | Pular para `#main-content`                    |
+| `VisuallyHidden.astro` | ✅     | Texto só para leitores de tela                |
+| `Button.astro`         | ✅     | `<button>` vs `<a>` correto, estados disabled |
+| `Dialog.astro`         | ✅     | Modal nativo `<dialog>` + focus trap + Escape |
+| `LiveRegion.astro`     | ⏳     | `aria-live` para feedback dinâmico            |
 
 ---
 
@@ -494,232 +348,94 @@ Criar em `packages/ui/styles/a11y.css`:
 
 ### Stack de ferramentas
 
-| Ferramenta | Escopo | Quando roda |
-|------------|--------|-------------|
-| **eslint-plugin-jsx-a11y** | Islands TSX/JSX | Pre-commit + CI |
-| **@axe-core/playwright** | Páginas renderizadas | CI e2e |
-| **pa11y-ci** | Scan estático do HTML buildado | CI pós-build |
-| **@storybook/addon-a11y** | Componentes isolados | Dev (Fase 3) |
-| **Testes de teclado custom** | Fluxos críticos | CI e2e |
+| Ferramenta                 | Escopo               | Quando roda                     |
+| -------------------------- | -------------------- | ------------------------------- |
+| **eslint-plugin-jsx-a11y** | Islands TSX/JSX      | CI (`bun run lint`)             |
+| **@axe-core/playwright**   | Páginas renderizadas | `bun run test:e2e`              |
+| **pa11y-ci**               | HTML buildado        | `bun run a11y`                  |
+| **Testes de teclado**      | Fluxos críticos      | `e2e/a11y/keyboard-nav.spec.ts` |
 
 ### 6.1 Integração axe-core + Playwright
 
+Helper: `e2e/helpers/axe-setup.ts`
+
 ```typescript
-// packages/testing/axe-setup.ts
-import AxeBuilder from '@axe-core/playwright';
-import type { Page } from '@playwright/test';
+import AxeBuilder from "@axe-core/playwright";
+import type { Page } from "@playwright/test";
 
-export async function assertNoA11yViolations(page: Page, context?: string) {
+export async function assertNoA11yViolations(page: Page) {
   const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-    .exclude('#decap-cms-root') // admin separado
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
-
-  expect(results.violations, formatViolations(results.violations)).toEqual([]);
+  expect(results.violations).toEqual([]);
 }
 ```
 
-```typescript
-// apps/template-landing/e2e/a11y/home.spec.ts
-import { test, expect } from '@playwright/test';
-import { assertNoA11yViolations } from '@repo/testing/axe-setup';
-
-test.describe('Acessibilidade — Homepage', () => {
-  test('sem violações WCAG 2.2 AA', async ({ page }) => {
-    await page.goto('/');
-    await assertNoA11yViolations(page);
-  });
-});
-```
+Teste: `e2e/a11y/all-routes.spec.ts`
 
 ### 6.2 Testes de navegação por teclado
 
-```typescript
-// packages/testing/keyboard-helpers.ts
-import type { Page } from '@playwright/test';
+Cenários de teclado: `e2e/a11y/keyboard-nav.spec.ts`
 
-export async function tabThrough(page: Page, count: number) {
-  for (let i = 0; i < count; i++) {
-    await page.keyboard.press('Tab');
-  }
-}
+| Cenário     | Resultado esperado                  |
+| ----------- | ----------------------------------- |
+| Skip link   | Foco em `#main-content`             |
+| Menu mobile | Abre com Enter, fecha com Escape    |
+| Focus trap  | Tab permanece dentro do menu aberto |
+| Formulário  | Ordem de foco lógica                |
 
-export async function assertFocusWithin(page: Page, selector: string) {
-  const focused = page.locator(':focus');
-  await expect(focused).toBeVisible();
-  const container = page.locator(selector);
-  await expect(container).toContainText(await focused.textContent() ?? '');
-}
-```
-
-**Cenários obrigatórios de teclado:**
-
-| Cenário | Passos | Resultado esperado |
-|---------|--------|-------------------|
-| Skip link | Tab → Enter | Foco em `#main-content` |
-| Menu mobile | Tab até botão → Enter | Menu abre, foco no primeiro link |
-| Fechar menu | Escape | Menu fecha, foco volta ao botão |
-| Formulário contato | Tab entre campos | Ordem lógica, foco visível |
-| Modal (se houver) | Tab | Focus trap ativo |
-
-```typescript
-test('menu mobile — teclado', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 667 });
-  await page.goto('/');
-
-  await page.keyboard.press('Tab'); // skip link
-  // ... navegar até menu toggle
-  await page.keyboard.press('Enter');
-  await expect(page.locator('[aria-expanded="true"]')).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(page.locator('[aria-expanded="false"]')).toBeVisible();
-});
-```
-
-### 6.3 Validação ARIA automatizada
-
-Além do axe, criar testes assertivos para atributos críticos:
-
-```typescript
-test('landmarks e ARIA estruturais', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('main#main-content')).toHaveCount(1);
-  await expect(page.locator('h1')).toHaveCount(1);
-  await expect(page.locator('nav[aria-label]')).toHaveCount(1);
-  await expect(page.locator('header')).toHaveCount(1);
-  await expect(page.locator('footer')).toHaveCount(1);
-});
-```
-
-### 6.4 Script standalone de validação
+### 6.3 Script pa11y pós-build
 
 ```bash
-# tooling/scripts/validate-a11y.ts
-# Roda pa11y-ci contra dist/ após build
-bun run build && pa11y-ci --config .pa11yci.json
+bun run a11y   # scripts/validate-a11y.ts → preview :4322 + pa11y-ci
 ```
 
-```json
-// .pa11yci.json
-{
-  "defaults": {
-    "standard": "WCAG2AA",
-    "runners": ["axe", "htmlcs"]
-  },
-  "urls": [
-    "http://localhost:4321/",
-    "http://localhost:4321/admin"
-  ]
-}
-```
+Config: `.pa11yci.json` (homepage em `dist/`).
 
 ---
 
 ## 7. Suítes de Testes E2E
 
-### Stack recomendada
+### Stack
 
-| Ferramenta | Papel |
-|------------|-------|
-| **Playwright** | E2E principal (multi-browser, trace, visual regression) |
-| **@axe-core/playwright** | A11y dentro dos e2e |
-| **@playwright/test** | Runner, fixtures, parallelização |
+| Ferramenta               | Papel                                          |
+| ------------------------ | ---------------------------------------------- |
+| **Playwright**           | E2E multi-browser (Chromium desktop + Pixel 7) |
+| **@axe-core/playwright** | A11y integrado aos e2e                         |
+| **Helpers locais**       | `e2e/helpers/`                                 |
 
-### Estrutura de testes
+### Estrutura atual
 
 ```
-apps/template-landing/
-├── e2e/
-│   ├── fixtures/
-│   │   └── base.ts                 # page objects compartilhados
-│   ├── a11y/
-│   │   ├── home.spec.ts
-│   │   └── keyboard-nav.spec.ts
-│   ├── seo/
-│   │   ├── meta-tags.spec.ts
-│   │   └── json-ld.spec.ts
-│   ├── visual/
-│   │   └── screenshots.spec.ts     # regression visual (opcional)
-│   └── flows/
-│       ├── navigation.spec.ts
-│       └── contact-form.spec.ts
-├── playwright.config.ts
-└── package.json
+e2e/
+├── helpers/
+│   ├── axe-setup.ts
+│   └── seo-assertions.ts
+├── a11y/
+│   ├── all-routes.spec.ts
+│   └── keyboard-nav.spec.ts
+└── seo/
+    ├── all-routes.spec.ts
+    └── robots.spec.ts
 ```
 
-### Cenários e2e obrigatórios
+### Cenários obrigatórios por landing
 
-#### SEO (`e2e/seo/`)
-
-```typescript
-test('meta tags e JSON-LD', async ({ page }) => {
-  await page.goto('/');
-  await expect(page).toHaveTitle(/Seu Negócio/);
-  const description = page.locator('meta[name="description"]');
-  await expect(description).toHaveAttribute('content', /.+/);
-  const jsonLd = page.locator('script[type="application/ld+json"]');
-  await expect(jsonLd).toHaveCount(1);
-  const data = JSON.parse(await jsonLd.textContent()!);
-  expect(data['@type']).toBe('LocalBusiness');
-});
-```
-
-#### Navegação (`e2e/flows/`)
-
-- Links âncora funcionam (`#contato`, `#features`)
-- Menu desktop/mobile navega corretamente
-- 404 customizado (quando existir)
-
-#### Formulário de contato
-
-- Validação HTML5 nativa
-- Submit (mock ou teste de integração conforme backend)
-- Mensagens de sucesso/erro acessíveis
-
-#### Performance smoke
-
-```typescript
-test('recursos críticos carregam', async ({ page }) => {
-  const responses: string[] = [];
-  page.on('response', r => {
-    if (r.status() >= 400) responses.push(`${r.status()} ${r.url()}`);
-  });
-  await page.goto('/');
-  expect(responses).toEqual([]);
-});
-```
+| Área      | O que testar                                         |
+| --------- | ---------------------------------------------------- |
+| SEO       | `title`, `meta description`, JSON-LD `LocalBusiness` |
+| A11y      | axe-core 0 violações em `/`                          |
+| Teclado   | Skip link, menu mobile, formulário                   |
+| Landmarks | 1× `main`, 1× `h1`, `nav[aria-label]`                |
 
 ### Configuração Playwright
 
-```typescript
-// playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+`playwright.config.ts` na raiz — `webServer` usa `bun run preview:e2e` na porta 4321.
 
-export default defineConfig({
-  testDir: './e2e',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  reporter: [['html'], ['github']],
-  use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:4321',
-    trace: 'on-first-retry',
-  },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
-  ],
-  webServer: {
-    command: 'pnpm preview',
-    url: 'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
-  },
-});
-```
+### Expansões futuras (Fase 4)
 
-### Testes no monorepo (Turborepo)
-
-Cada app define `test:e2e` no `package.json`. O pipeline CI executa `turbo test:e2e --filter=...[origin/main]` para rodar apenas apps afetados.
+- `e2e/flows/` — navegação por âncoras, 404
+- `e2e/visual/` — regression visual (opcional)
 
 ---
 
@@ -727,152 +443,133 @@ Cada app define `test:e2e` no `package.json`. O pipeline CI executa `turbo test:
 
 ### Pipeline GitHub Actions
 
-```yaml
-# .github/workflows/quality.yml
-name: Quality Gate
+Arquivo: `.github/workflows/quality.yml`
 
-on: [push, pull_request]
+| Step       | Comando                         |
+| ---------- | ------------------------------- |
+| Install    | `bun install --frozen-lockfile` |
+| Lint       | `bun run lint`                  |
+| Build      | `bun run build`                 |
+| E2E        | `bun run test:e2e`              |
+| pa11y      | `bun run a11y`                  |
+| Lighthouse | `bun run lighthouse`            |
 
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'pnpm' }
-
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm build
-      - run: pnpm test:e2e
-      - run: pnpm a11y
-      - run: pnpm lighthouse
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: apps/*/playwright-report/
-```
+Artefatos: `playwright-report/`, `reports/lighthouse/`
 
 ### Regras de merge
 
-| Gate | Bloqueia merge? |
-|------|-----------------|
-| ESLint (incl. a11y plugin) | Sim |
-| Build sem erros | Sim |
-| Playwright e2e | Sim |
-| axe-core (0 violações) | Sim |
-| Lighthouse ≥ 95 (4 categorias) | Sim |
-| Bundle budget | Sim (warning → error na Fase 2) |
+| Gate                           | Bloqueia merge?         |
+| ------------------------------ | ----------------------- |
+| ESLint (incl. jsx-a11y)        | Sim                     |
+| Build sem erros                | Sim                     |
+| Playwright e2e                 | Sim                     |
+| axe-core (0 violações)         | Sim                     |
+| pa11y-ci (0 erros)             | Sim                     |
+| Lighthouse ≥ 95 (4 categorias) | Sim                     |
+| Bundle budget                  | Sim (via Lighthouse CI) |
 
-### Pre-commit (opcional, Fase 2)
+### Pre-commit ✅
 
-```yaml
-# .husky/pre-commit
-pnpm lint-staged
-```
-
-`lint-staged`: ESLint + Prettier nos arquivos alterados.
+Husky + lint-staged: ESLint + Prettier nos arquivos staged (`.husky/pre-commit`).
 
 ---
 
 ## 9. Instruções para IA (Guidelines)
 
-Para que cada nova landing page e componente siga os padrões do boilerplate, manter documentação em camadas no repositório.
-
 ### 9.1 Estrutura de arquivos
 
 ```
 docs/guidelines/
-├── 00-project-context.md       # contexto global — ler primeiro
-├── 10-performance-cwv.md         # Core Web Vitals
-├── 20-accessibility.md           # WCAG 2.2 AA
-├── 30-astro-components.md        # convenções Astro
-├── 31-content-collections.md   # Zod + Decap CMS
-├── 40-seo-local.md               # meta-tags, JSON-LD
-├── 50-testing-e2e.md             # Playwright + axe-core
-└── 60-new-landing.md             # checklist novo cliente
+├── 00-project-context.md
+├── 10-performance-cwv.md
+├── 20-accessibility.md
+├── 30-astro-components.md
+├── 31-content-collections.md
+├── 40-seo-local.md
+├── 50-testing-e2e.md
+└── 60-new-landing.md
 
-AGENTS.md                         # visão geral (raiz do repositório)
-docs/NEW-LANDING-GUIDE.md         # guia passo a passo
-docs/templates/                   # snippets copiáveis
+AGENTS.md                    # entrada para IA (raiz)
+docs/NEW-LANDING-GUIDE.md    # passo a passo novo cliente
+docs/templates/              # snippets copiáveis
 ```
 
-### 9.2 Conteúdo de cada guideline
+### 9.2 `AGENTS.md`
 
-Os arquivos em `docs/guidelines/` contêm os padrões detalhados por área. Consulte o arquivo correspondente antes de implementar.
+Ponto de entrada — stack, estrutura plana, comandos (`bun run quality`), o que evitar.
 
-### 9.3 `AGENTS.md` (raiz do repositório)
+### 9.3 Templates
 
-Arquivo de entrada para assistentes de IA e novos contribuidores. Deve referenciar `docs/guidelines/` e os comandos do monorepo (`bun run build`, `lint`, `test:e2e`).
-
-### 9.4 Templates por tipo de implementação
-
-Criar em `docs/templates/` snippets que a IA pode copiar:
-
-| Template | Arquivo |
-|----------|---------|
-| Novo componente Astro | `docs/templates/component.astro.template` |
-| Nova seção below-fold | `docs/templates/lazy-section.astro.template` |
-| Novo teste a11y | `docs/templates/a11y-spec.ts.template` |
+| Template                | Arquivo                                         |
+| ----------------------- | ----------------------------------------------- |
+| Novo componente Astro   | `docs/templates/component.astro.template`       |
+| Nova seção below-fold   | `docs/templates/lazy-section.astro.template`    |
+| Novo teste a11y         | `docs/templates/a11y-spec.ts.template`          |
 | Nova content collection | `docs/templates/content-collection.ts.template` |
-| Nova landing (scaffold) | `docs/templates/app-package.json.template` |
 
 ---
 
 ## 10. Roadmap de Implementação
 
-### Fase 1 — Fundação (2–3 semanas)
+### Fase 1 — Fundação do template ✅
 
-| # | Tarefa | Entregável |
-|---|--------|------------|
-| 1.1 | Migrar para monorepo Turborepo | `apps/template-landing`, `packages/ui`, `packages/seo` |
-| 1.2 | Extrair componentes para `@repo/ui` | Header, Hero, Features, etc. |
-| 1.3 | Configurar ESLint + Prettier + `eslint-plugin-jsx-a11y` | `packages/config/eslint` |
-| 1.4 | Setup Playwright + primeiro teste e2e | `e2e/seo/meta-tags.spec.ts` |
-| 1.5 | Integrar `@axe-core/playwright` | `e2e/a11y/home.spec.ts` |
-| 1.6 | Criar `docs/guidelines/` + `AGENTS.md` | Guidelines 00, 20, 30 |
-| 1.7 | Trocar OG image para JPG/WebP | `public/og-default.jpg` |
+| #   | Tarefa                       | Entregável                      | Status |
+| --- | ---------------------------- | ------------------------------- | ------ |
+| 1.1 | Estrutura plana na raiz      | `src/`, `e2e/`, `public/`       | ✅     |
+| 1.2 | Componentes de seção         | `src/components/*`              | ✅     |
+| 1.3 | SEO / JSON-LD                | `src/seo/`                      | ✅     |
+| 1.4 | ESLint + Prettier + jsx-a11y | `eslint.config.js`              | ✅     |
+| 1.5 | Playwright + teste SEO       | `e2e/seo/all-routes.spec.ts`    | ✅     |
+| 1.6 | axe-core no e2e              | `e2e/a11y/all-routes.spec.ts`   | ✅     |
+| 1.7 | Guidelines + AGENTS.md       | `docs/guidelines/`, `AGENTS.md` | ✅     |
+| 1.8 | OG image raster              | `public/og-default.jpg`         | ✅     |
 
-### Fase 2 — Performance e Quality Gates (2 semanas)
+### Fase 2 — Performance e quality gates ✅
 
-| # | Tarefa | Entregável |
-|---|--------|------------|
-| 2.1 | Lighthouse CI + budgets | `lighthouserc.json`, script `pnpm lighthouse` |
-| 2.2 | Lazy loading seções + islands menu mobile | `LazySection`, `MobileMenu` island |
-| 2.3 | Primitivos a11y | SkipLink, VisuallyHidden, focus styles |
-| 2.4 | Testes de teclado completos | `keyboard-nav.spec.ts` |
-| 2.5 | GitHub Actions quality gate | `.github/workflows/quality.yml` |
-| 2.6 | pa11y-ci pós-build | `validate-a11y.ts` |
-| 2.7 | `@astrojs/sitemap` | sitemap.xml automático |
+| #   | Tarefa                           | Entregável                                            | Status |
+| --- | -------------------------------- | ----------------------------------------------------- | ------ |
+| 2.1 | Lighthouse CI + budgets          | `lighthouserc.json`, `testing/lighthouse-budget.json` | ✅     |
+| 2.2 | LazySection + menu mobile island | `LazySection.astro`, `MobileMenuIsland`               | ✅     |
+| 2.3 | Primitivos a11y base             | `SkipLink`, `VisuallyHidden`, `a11y.css`              | ✅     |
+| 2.4 | Testes de teclado                | `keyboard-nav.spec.ts`                                | ✅     |
+| 2.5 | GitHub Actions                   | `.github/workflows/quality.yml`                       | ✅     |
+| 2.6 | pa11y-ci pós-build               | `scripts/validate-a11y.ts`                            | ✅     |
+| 2.7 | Sitemap automático               | `@astrojs/sitemap`                                    | ✅     |
 
-### Fase 3 — Escala e DX (2 semanas)
+### Fase 3 — DX do cliente ✅
 
-| # | Tarefa | Entregável |
-|---|--------|------------|
-| 3.1 | CLI `scaffold:landing` | `tooling/scripts/scaffold-landing.ts` |
-| 3.2 | Guidelines restantes (10, 40, 50, 60) | `docs/guidelines/` completo |
-| 3.3 | `docs/NEW-LANDING-GUIDE.md` | Guia passo a passo |
-| 3.4 | Storybook (opcional) | `apps/storybook` com addon-a11y |
-| 3.5 | Visual regression Playwright | `e2e/visual/` |
-| 3.6 | Cache remoto Turborepo | Vercel Remote Cache ou self-hosted |
+| #   | Tarefa                                    | Entregável                                                      | Status |
+| --- | ----------------------------------------- | --------------------------------------------------------------- | ------ |
+| 3.1 | Guia passo a passo                        | `docs/NEW-LANDING-GUIDE.md`                                     | ✅     |
+| 3.2 | Guidelines completos                      | `docs/guidelines/10–60`                                         | ✅     |
+| 3.3 | Templates copiáveis                       | `docs/templates/`                                               | ✅     |
+| 3.4 | Checklist novo cliente                    | `docs/guidelines/60-new-landing.md`                             | ✅     |
+| 3.5 | Script `quality` unificado                | `package.json`                                                  | ✅     |
+| 3.6 | Índice de documentação                    | `docs/GUIA-DOS-ARQUIVOS.md`                                     | ✅     |
+| 3.7 | Guardrails para novas páginas/componentes | `70-new-page-component.md`, `all-routes` e2e, `discover-routes` | ✅     |
 
-### Fase 4 — Polimento corporativo (contínuo)
+### Fase 4 — Polimento ✅
 
-- Documentação de deploy (Netlify, Cloudflare Pages, Vercel)
-- Exemplo de 2ª landing (`apps/demo-salao/`) como referência
-- Monitoramento RUM (web-vitals via analytics)
-- Changelog e versionamento semântico dos pacotes `@repo/*`
+| #   | Tarefa                          | Entregável                   | Status |
+| --- | ------------------------------- | ---------------------------- | ------ |
+| 4.1 | Hero LCP em raster (AVIF/WebP)  | `src/assets/hero.webp`       | ✅     |
+| 4.2 | `robots.txt`                    | `public/robots.txt`          | ✅     |
+| 4.3 | Primitivos `Button` + `Dialog`  | `src/components/primitives/` | ✅     |
+| 4.4 | `aria-current="page"` no nav    | `Header.astro`               | ✅     |
+| 4.5 | Pre-commit Husky + lint-staged  | `.husky/`                    | ✅     |
+| 4.6 | Testes e2e de fluxos            | `e2e/flows/`                 | ✅     |
+| 4.7 | Visual regression (opcional)    | `e2e/visual/`                | ✅     |
+| 4.8 | Documentação de deploy por host | `docs/DEPLOY.md`             | ✅     |
+| 4.9 | Monitoramento RUM (web-vitals)  | doc opcional em `DEPLOY.md`  | ✅     |
 
 ---
 
 ## 11. Checklist de Entrega por Landing Page
 
-Use este checklist em toda entrega de cliente (humano ou IA):
+Use em toda entrega de cliente (humano ou IA). Detalhes em [`NEW-LANDING-GUIDE.md`](NEW-LANDING-GUIDE.md).
 
 ### Performance
+
 - [ ] Lighthouse Performance ≥ 95 (mobile, throttling 4G)
 - [ ] LCP ≤ 1.8s | CLS ≤ 0.02 | INP ≤ 150ms
 - [ ] Apenas 1 imagem `eager` + `fetchpriority="high"`
@@ -881,42 +578,52 @@ Use este checklist em toda entrega de cliente (humano ou IA):
 - [ ] Sem erros 4xx/5xx em recursos
 
 ### Acessibilidade
+
 - [ ] Lighthouse Accessibility ≥ 95
 - [ ] axe-core: 0 violações WCAG 2.2 AA
-- [ ] Navegação completa via teclado testada
+- [ ] pa11y-ci: 0 erros
+- [ ] Testes de teclado passando
 - [ ] Skip link funcional
 - [ ] Contraste validado (texto ≥ 4.5:1)
-- [ ] Formulários com labels e mensagens de erro acessíveis
 
 ### SEO
+
 - [ ] Lighthouse SEO ≥ 95
 - [ ] JSON-LD LocalBusiness validado (Google Rich Results Test)
 - [ ] `title`, `description`, `canonical` únicos
 - [ ] OG image JPG/WebP 1200×630
-- [ ] `sitemap.xml` + `robots.txt`
-- [ ] `hreflang` se multilíngue
+- [ ] `sitemap.xml` gerado
+- [ ] `robots.txt` com Sitemap do domínio do cliente
 
 ### Testes
-- [ ] `pnpm test:e2e` passando (desktop + mobile)
-- [ ] Testes a11y + teclado passando
-- [ ] Meta-tags e JSON-LD assertivos nos e2e
+
+- [ ] `bun run test:e2e` passando (desktop + mobile)
+- [ ] `bun run quality` passando localmente ou no CI
 
 ### Conteúdo e CMS
+
 - [ ] `home.json` preenchido e validado por Zod
 - [ ] Decap CMS configurado para repo do cliente
 - [ ] Imagens otimizadas em `public/assets/`
 
-### IA / Documentação
+### Documentação
+
 - [ ] `docs/guidelines/60-new-landing.md` seguido
-- [ ] README do app atualizado com URL e credenciais CMS
-- [ ] `AGENTS.md` referenciado no README
+- [ ] README do cliente atualizado com URL e instruções CMS
 
 ---
 
-## Dependências a adicionar (referência)
+## Dependências (referência)
 
 ```json
 {
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2",
+    "@astrojs/tailwind": "^5.1",
+    "astro": "^5.1",
+    "sharp": "^0.33",
+    "tailwindcss": "^3.4"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.10",
     "@lhci/cli": "^0.14",
@@ -927,11 +634,12 @@ Use este checklist em toda entrega de cliente (humano ou IA):
     "pa11y-ci": "^3.1",
     "prettier": "^3",
     "prettier-plugin-astro": "^0.14",
-    "turbo": "^2.3",
     "typescript": "^5.7"
   }
 }
 ```
+
+Gerenciador: **Bun** (`bun.lock` versionado).
 
 ---
 
@@ -941,10 +649,9 @@ Use este checklist em toda entrega de cliente (humano ou IA):
 - [WCAG 2.2](https://www.w3.org/TR/WCAG22/)
 - [Astro Performance](https://docs.astro.build/en/guides/performance/)
 - [Astro Islands](https://docs.astro.build/en/concepts/islands/)
-- [Turborepo Docs](https://turbo.build/repo/docs)
 - [Playwright + axe](https://playwright.dev/docs/accessibility-testing)
 - [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci)
 
 ---
 
-*Documento vivo — atualizar conforme fases forem concluídas. Última revisão: junho/2026.*
+_Documento vivo — atualizar conforme fases forem concluídas. Última revisão: junho/2026 (modelo template copiável)._

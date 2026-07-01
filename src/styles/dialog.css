@@ -1,0 +1,5 @@
+/* Estilos base do Dialog — override no bloco DESIGN SYSTEM OVERRIDES se necessário */
+
+.dialog:not([open]) {
+  display: none;
+}

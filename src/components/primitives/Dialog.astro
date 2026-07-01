@@ -1,0 +1,136 @@
+---
+/**
+ * Dialog.astro
+ * ------------
+ * Modal nativo com <dialog> — focus trap e Escape via API do navegador.
+ * Controle via `data-dialog-open` / `data-dialog-close` ou `showModal()` no script.
+ */
+
+import VisuallyHidden from "./VisuallyHidden.astro";
+
+export interface Props {
+  id: string;
+  title: string;
+  descriptionId?: string;
+  closeLabel?: string;
+}
+
+const { id, title, descriptionId, closeLabel = "Fechar diálogo" } = Astro.props;
+
+const titleId = `${id}-title`;
+const descId = descriptionId ?? `${id}-description`;
+---
+
+<dialog
+  id={id}
+  class="dialog"
+  aria-labelledby={titleId}
+  aria-describedby={descId}
+  data-dialog
+>
+  <div class="dialog__panel" role="document">
+    <header class="dialog__header">
+      <h2 id={titleId} class="dialog__title">
+        {title}
+      </h2>
+      <button
+        type="button"
+        class="dialog__close"
+        aria-label={closeLabel}
+        data-dialog-close
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div id={descId} class="dialog__body">
+      <slot />
+    </div>
+  </div>
+</dialog>
+
+<VisuallyHidden>
+  <p>Use Escape para fechar este diálogo.</p>
+</VisuallyHidden>
+
+<script>
+  function bindDialogs(): void {
+    document
+      .querySelectorAll<HTMLDialogElement>("[data-dialog]")
+      .forEach((dialog) => {
+        if (dialog.dataset.dialogBound === "true") return;
+        dialog.dataset.dialogBound = "true";
+
+        dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
+          btn.addEventListener("click", () => dialog.close());
+        });
+
+        dialog.addEventListener("click", (event) => {
+          if (event.target === dialog) dialog.close();
+        });
+
+        dialog.addEventListener("cancel", (event) => {
+          event.preventDefault();
+          dialog.close();
+        });
+      });
+
+    document
+      .querySelectorAll<HTMLElement>("[data-dialog-open]")
+      .forEach((trigger) => {
+        if (trigger.dataset.dialogOpenBound === "true") return;
+        trigger.dataset.dialogOpenBound = "true";
+
+        const targetId = trigger.getAttribute("data-dialog-open");
+        if (!targetId) return;
+
+        trigger.addEventListener("click", () => {
+          const dialog = document.getElementById(
+            targetId,
+          ) as HTMLDialogElement | null;
+          dialog?.showModal();
+        });
+      });
+  }
+
+  bindDialogs();
+  document.addEventListener("astro:page-load", bindDialogs);
+</script>
+
+<style>
+  .dialog {
+    border: none;
+    padding: 0;
+    max-width: min(32rem, calc(100vw - 2rem));
+    border-radius: 0.5rem;
+    background: transparent;
+  }
+
+  .dialog::backdrop {
+    background: rgb(15 23 42 / 0.55);
+  }
+
+  .dialog__panel {
+    background: #fff;
+    padding: 1.25rem;
+  }
+
+  .dialog__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .dialog__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .dialog__close {
+    flex-shrink: 0;
+    line-height: 1;
+    font-size: 1.5rem;
+  }
+</style>

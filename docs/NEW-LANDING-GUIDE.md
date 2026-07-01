@@ -1,6 +1,6 @@
 # Guia — Nova Landing Page de Cliente
 
-Passo a passo para iniciar um projeto de cliente a partir do boilerplate `seo-base`.
+Passo a passo para iniciar um projeto de cliente a partir do boilerplate **baseCO**.
 
 > **Primeiro passo:** duplique este repositório (GitHub “Use this template” ou cópia local) para um **novo repositório** do cliente. Todo o trabalho abaixo acontece no repo do cliente.
 
@@ -20,9 +20,9 @@ Duplicar repo → Config base → Conteúdo (JSON + CMS) → Visual (DS) → SEO
 
 ```javascript
 export default defineConfig({
-  site: 'https://www.cliente.com.br',  // URL de produção — obrigatório
-  output: 'static',
-  trailingSlash: 'never',
+  site: "https://www.cliente.com.br", // URL de produção — obrigatório
+  output: "static",
+  trailingSlash: "never",
   // ... demais configs mantidas
 });
 ```
@@ -35,7 +35,7 @@ Atualizar `name` e `description` para o cliente.
 
 ```yaml
 backend:
-  name: github          # ou git-gateway (Netlify)
+  name: github # ou git-gateway (Netlify)
   repo: org/repo-cliente
   branch: main
 
@@ -120,12 +120,12 @@ Sempre `font-display: swap` no `@font-face`.
 
 ### Imagens
 
-| Arquivo | Uso |
-|---------|-----|
-| `src/assets/hero.*` | Imagem LCP do Hero |
-| `public/assets/*` | Uploads via Decap CMS |
+| Arquivo                 | Uso                   |
+| ----------------------- | --------------------- |
+| `src/assets/hero.*`     | Imagem LCP do Hero    |
+| `public/assets/*`       | Uploads via Decap CMS |
 | `public/og-default.jpg` | OG/Twitter (1200×630) |
-| `public/favicon.svg` | Favicon do cliente |
+| `public/favicon.svg`    | Favicon do cliente    |
 
 ---
 
@@ -185,22 +185,16 @@ bun run a11y        # pa11y-ci pós-build
 bun run quality   # lint + build + e2e + a11y + lighthouse
 ```
 
-| Gate | Alvo |
-|------|------|
-| Build | Sem erros |
-| Lighthouse (4 categorias) | ≥ 95 |
-| axe-core | 0 violações |
-| e2e | Todos passando |
+| Gate                      | Alvo           |
+| ------------------------- | -------------- |
+| Build                     | Sem erros      |
+| Lighthouse (4 categorias) | ≥ 95           |
+| axe-core                  | 0 violações    |
+| e2e                       | Todos passando |
 
 ---
 
-## 8. Deploy
-
-Hospedagem recomendada: **Netlify** (git-gateway do Decap CMS), **Cloudflare Pages** ou **Vercel**.
-
-- Build command: `bun run build` (ou `npm run build`)
-- Output directory: `dist`
-- Configurar domínio customizado e HTTPS
+Deploy em produção: [`docs/DEPLOY.md`](DEPLOY.md).
 
 ---
 

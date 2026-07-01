@@ -1,5 +1,5 @@
 # =============================================================================
-# SEO Base — .gitignore para repositório PÚBLICO (portfólio / currículo)
+# baseCO — .gitignore para repositório PÚBLICO (portfólio / currículo)
 # Objetivo: nunca commitar segredos, caches, builds ou artefatos locais.
 # =============================================================================
 
@@ -10,16 +10,35 @@
 .env.*
 !.env.example
 !.env.*.example
+.envrc
+.dev.vars
 *.pem
 *.key
 *.p12
 *.pfx
+*.ppk
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
 credentials.json
 service-account*.json
 secrets.json
 .secrets/
+auth.json
+token.json
+.htpasswd
+.npmrc
+!.npmrc.example
 .netlify/
 .vercel/
+.wrangler/
+
+# Overrides locais (CMS, deploy, etc.)
+**/config.local.yml
+**/config.local.*.yml
+local.config.*
+*.local.json
 
 # -----------------------------------------------------------------------------
 # Dependências
@@ -45,10 +64,18 @@ test-results/
 blob-report/
 playwright/.cache/
 playwright/.auth/
+.playwright/
 coverage/
 .nyc_output/
 .lighthouseci/
 reports/
+.lighthouserc.generated.json
+
+# -----------------------------------------------------------------------------
+# Uploads de cliente (manter só .gitkeep no template)
+# -----------------------------------------------------------------------------
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
 
 # -----------------------------------------------------------------------------
 # Logs
@@ -91,6 +118,14 @@ Desktop.ini
 *.temp
 *.bak
 *.backup
+
+# -----------------------------------------------------------------------------
+# Bancos / estado local
+# -----------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
 
 # -----------------------------------------------------------------------------
 # Lockfiles de outros gerenciadores (projeto usa Bun — versionar bun.lock)

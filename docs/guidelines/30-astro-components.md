@@ -1,4 +1,3 @@
-
 # Componentes Astro
 
 ## Estrutura de arquivo
@@ -14,12 +13,12 @@
 
 Padrão BEM simplificado — **classes vazias no boilerplate**, estilizadas pelo DS do cliente:
 
-| Componente | Exemplos de hooks |
-|------------|-------------------|
-| Hero | `.hero`, `.hero__title`, `.hero__cta`, `.hero__cta--primary` |
-| Header | `.header`, `.header__brand`, `.header__link`, `.header__menu-toggle` |
-| Features | `.features`, `.features__item`, `.features__icon` |
-| Contact | `.contact`, `.contact__form`, `.contact__field` |
+| Componente | Exemplos de hooks                                                    |
+| ---------- | -------------------------------------------------------------------- |
+| Hero       | `.hero`, `.hero__title`, `.hero__cta`, `.hero__cta--primary`         |
+| Header     | `.header`, `.header__brand`, `.header__link`, `.header__menu-toggle` |
+| Features   | `.features`, `.features__item`, `.features__icon`                    |
+| Contact    | `.contact`, `.contact__form`, `.contact__field`                      |
 
 Não aplicar cores/tipografia definitivas nos componentes base — reservar para `global.css` (bloco DESIGN SYSTEM OVERRIDES) ou CSS externo.
 
@@ -42,8 +41,11 @@ Não aplicar cores/tipografia definitivas nos componentes base — reservar para
 
 ## Novo componente — checklist
 
+Ver checklist completo em **`70-new-page-component.md`**. Resumo:
+
 - [ ] Section com `aria-labelledby` + heading com `id`
 - [ ] Hooks CSS `.componente__*` reservados
 - [ ] Props tipadas
 - [ ] Comentários DS HOOK / ANIMAÇÃO
 - [ ] Sem JS bloqueante; island só se interativo
+- [ ] `bun run lint` + `bun run check`

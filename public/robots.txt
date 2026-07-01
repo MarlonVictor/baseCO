@@ -1,0 +1,7 @@
+# Atualize o domínio ao publicar (deve coincidir com astro.config.mjs → site)
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+
+Sitemap: https://exemplo.com.br/sitemap-index.xml

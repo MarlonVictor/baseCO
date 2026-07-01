@@ -11,8 +11,8 @@
  *  - Para animações de entrada, ver bloco "ANIMAÇÃO" no final do componente.
  */
 
-import { Image } from 'astro:assets';
-import heroImage from '~/assets/hero.svg';
+import { Image } from "astro:assets";
+import heroImage from "~/assets/hero.webp";
 
 export interface Props {
   eyebrow?: string;
@@ -24,16 +24,25 @@ export interface Props {
 }
 
 const {
-  eyebrow = 'Bem-vindo',
-  title = 'Headline principal que comunica seu valor em uma frase.',
-  description = 'Subtítulo curto reforçando o benefício e gerando contexto para a ação principal. Mantenha entre uma e duas linhas.',
-  primaryCta = { label: 'Começar agora', href: '#contato', ariaLabel: 'Ir para a seção de contato' },
-  secondaryCta = { label: 'Saiba mais', href: '#features', ariaLabel: 'Ir para a seção de funcionalidades' },
-  imageAlt = 'Ilustração representando o produto principal',
+  eyebrow = "Bem-vindo",
+  title = "Headline principal que comunica seu valor em uma frase.",
+  description = "Subtítulo curto reforçando o benefício e gerando contexto para a ação principal. Mantenha entre uma e duas linhas.",
+  primaryCta = {
+    label: "Começar agora",
+    href: "#contato",
+    ariaLabel: "Ir para a seção de contato",
+  },
+  secondaryCta = {
+    label: "Saiba mais",
+    href: "#features",
+    ariaLabel: "Ir para a seção de funcionalidades",
+  },
+  imageAlt = "Ilustração representando o produto principal",
 } = Astro.props;
 ---
 
 <section
+  id="inicio"
   class="hero relative w-full"
   aria-labelledby="hero-title"
   data-section="hero"
@@ -41,11 +50,13 @@ const {
   <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:py-32">
     <div class="grid items-center gap-10 md:grid-cols-2 md:gap-12">
       <div class="hero__content order-2 md:order-1">
-        {eyebrow && (
-          <p class="hero__eyebrow text-sm font-medium uppercase tracking-wider">
-            {eyebrow}
-          </p>
-        )}
+        {
+          eyebrow && (
+            <p class="hero__eyebrow text-sm font-medium uppercase tracking-wider">
+              {eyebrow}
+            </p>
+          )
+        }
 
         <h1
           id="hero-title"
@@ -58,7 +69,9 @@ const {
           {description}
         </p>
 
-        <div class="hero__actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div
+          class="hero__actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
+        >
           <a
             href={primaryCta.href}
             class="hero__cta hero__cta--primary inline-flex items-center justify-center rounded px-6 py-3 font-medium"
@@ -67,15 +80,17 @@ const {
             {primaryCta.label}
           </a>
 
-          {secondaryCta && (
-            <a
-              href={secondaryCta.href}
-              class="hero__cta hero__cta--secondary inline-flex items-center justify-center rounded px-6 py-3 font-medium"
-              aria-label={secondaryCta.ariaLabel ?? secondaryCta.label}
-            >
-              {secondaryCta.label}
-            </a>
-          )}
+          {
+            secondaryCta && (
+              <a
+                href={secondaryCta.href}
+                class="hero__cta hero__cta--secondary inline-flex items-center justify-center rounded px-6 py-3 font-medium"
+                aria-label={secondaryCta.ariaLabel ?? secondaryCta.label}
+              >
+                {secondaryCta.label}
+              </a>
+            )
+          }
         </div>
       </div>
 

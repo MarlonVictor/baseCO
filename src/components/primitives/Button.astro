@@ -1,0 +1,51 @@
+---
+/**
+ * Button.astro
+ * ------------
+ * Primitivo acessível: renderiza <button> ou <a> conforme `href`.
+ * Estados disabled apenas em <button>.
+ */
+
+export interface Props {
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  variant?: "primary" | "secondary" | "ghost";
+  disabled?: boolean;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  href,
+  type = "button",
+  variant = "primary",
+  disabled = false,
+  ariaLabel,
+  class: className = "",
+} = Astro.props;
+
+const baseClass = `btn btn--${variant} ${className}`.trim();
+const Tag = href ? "a" : "button";
+---
+
+{
+  href ? (
+    <a href={href} class={baseClass} aria-label={ariaLabel}>
+      <slot />
+    </a>
+  ) : (
+    <button
+      type={type}
+      class={baseClass}
+      disabled={disabled}
+      aria-disabled={disabled || undefined}
+      aria-label={ariaLabel}
+    >
+      <slot />
+    </button>
+  )
+}
+
+<!--
+  DESIGN SYSTEM HOOK — .btn, .btn--primary, .btn--secondary, .btn--ghost
+-->

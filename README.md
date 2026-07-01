@@ -1,215 +1,271 @@
-# SEO Base
+<h1 align="center" style="font-weight: bold;">
+  <img src="./public/favicon.svg" width="120px" alt="baseCO">
+</h1>
 
-Boilerplate / Landing Page base estática com **Astro 5** e **Tailwind CSS**, estruturada com foco em **SEO local avançado**, acessibilidade (WCAG) e alta performance de carregamento, com **Decap CMS** pré-integrado para gestão de conteúdo.
+<p align="center">
+  <img src="https://img.shields.io/badge/Astro-5-BC52EE?style=for-the-badge&logo=astro&logoColor=white&labelColor=09090A" alt="Astro 5" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white&labelColor=09090A" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=for-the-badge&logo=playwright&logoColor=white&labelColor=09090A" alt="Playwright" />
+  <img src="https://img.shields.io/badge/WCAG-2.2_AA-005A9C?style=for-the-badge&logo=w3c&logoColor=white&labelColor=09090A" alt="WCAG 2.2 AA" />
+  <img src="https://img.shields.io/github/last-commit/MarlonVictor/baseCO?style=for-the-badge&logo=git&logoColor=white&labelColor=09090A&color=ff4d1d" alt="last commit" />
+</p>
 
-> Projeto base/template para criação acelerada de landing pages de clientes, permitindo acoplar um Design System externo sem necessidade de alterar a estrutura semântica ou as coleções de dados.
+<p align="center">
+  <a href="./README.pt-BR.md">🇧🇷 Português (pt-BR)</a>
+</p>
 
-### Documentação para IA e padrões do projeto
+<p align="center">
+ <a href="#about">About</a> •
+ <a href="#quality-gates">Quality Gates</a> •
+ <a href="#seo">SEO</a> •
+ <a href="#performance">Performance</a> •
+ <a href="#accessibility">Accessibility</a> •
+ <a href="#testing">Testing</a> •
+ <a href="#technologies">Stack</a> •
+ <a href="#structure">Structure</a> •
+ <a href="#started">Getting Started</a> •
+ <a href="#docs">Documentation</a> •
+ <a href="#deploy">Deploy</a> •
+ <a href="#license">License</a>
+</p>
 
-| Recurso | Descrição |
-|---------|-----------|
-| [`AGENTS.md`](./AGENTS.md) | Ponto de entrada para agentes de IA — stack, metas, convenções |
-| [`docs/guidelines/`](./docs/guidelines/) | Padrões de desenvolvimento por área |
-| [`docs/PLANO-BOILERPLATE-CORPORATIVO.md`](./docs/PLANO-BOILERPLATE-CORPORATIVO.md) | Roadmap histórico (performance, a11y, testes) |
-| [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md) | Passo a passo para nova landing de cliente |
-| [`docs/GUIA-DOS-ARQUIVOS.md`](./docs/GUIA-DOS-ARQUIVOS.md) | Índice simples — para que serve cada documento |
+<p align="center">
+  <b>Technical boilerplate for static landing pages — SEO, performance, accessibility, and automated testing from day one.</b>
+</p>
 
----
+<p align="center">
+  The engineering base behind my future products and client sites: I copy this repository, customize content and visuals, and keep the same quality standards.
+</p>
 
-## Preview
-
-<!-- Adicione as capturas da Landing Page em public/assets/ para os links abaixo funcionarem -->
-
-### Visão geral
-
-| Desktop View | Mobile View |
-|:---:|:---:|
-| ![Landing Page — Desktop](./public/og-default.jpg) | ![Landing Page — Mobile](./public/favicon.svg) |
-| _Layout estruturado com cabeçalho, hero e seções modulares_ | _Navegação mobile nativa e design responsivo fluido_ |
-
-### Painel de Conteúdo (CMS)
-
-| Interface de Edição | Configuração de Campos |
-|:---:|:---:|
-| ![Decap CMS — Edição](./public/favicon.svg) | ![Decap CMS — Configuração](./public/favicon.svg) |
-| _Edição em tempo real de textos, diferenciais e contato_ | _Coleção estruturada via esquema JSON + Zod_ |
-
-> **Dica:** para ilustrar o README com imagens reais do projeto renderizado, salve capturas de tela em `public/assets/` e atualize os caminhos das imagens acima.
-
----
-
-## O que o sistema faz
-
-### SEO Local & Otimização de Busca
-- **Dados Estruturados**: Schema JSON-LD (`LocalBusiness`) dinâmico e extensível para melhor indexação e exibição de Rich Results (Google Knowledge Panel).
-- **Meta-tags Dinâmicas**: Controle completo de títulos, descrições, URL canônica, imagem Open Graph, Twitter Card e diretivas de robots (`index/noindex`) via propriedades do Layout principal.
-- **Configurações Prontas**: Otimização de barra do navegador (`theme-color`), favicon vetorial e suporte nativo a tags canônicas automáticas.
-
-### Acessibilidade (WCAG)
-- **Skip Link**: Link invisível ("Pular para o conteúdo") ativado via teclado para acessibilidade de leitores de tela (critério WCAG 2.4.1).
-- **Semântica HTML5**: Uso rigoroso de landmarks estruturais (`<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`, `<figure>`, `<blockquote>`).
-- **Navegação Acessível**: Botão de menu mobile estruturado com padrões `aria-controls` e `aria-expanded` dinâmicos.
-- **Design Adaptativo**: Suporte nativo a redução de animações via mídia query `prefers-reduced-motion`.
-
-### Conteúdo Gerenciável (Decap CMS)
-- **Local-first CMS**: Interface administrativa estática (`/admin`) usando Decap CMS pré-configurada para carregamento instantâneo.
-- **Content Collections**: Validação e parsing automático do conteúdo via Astro Content Collections, utilizando schemas com **Zod** para assegurar a consistência dos dados estruturados.
-- **Campos Estruturados**: Configuração pronta para Hero (título, subtítulo), Diferenciais/Serviços (lista com ícones) e Informações de Contato.
-
-### Design System Ready
-- **Hooks de Estilização**: Classes CSS vazias como hooks (ex: `.hero__title`, `.features__item`) reservadas no HTML, prontas para receber regras visuais de um Design System externo.
-- **Tokens do Tailwind**: Arquivo de configuração preparado para mapear variáveis CSS expostas por fontes, cores e tamanhos globais da identidade visual do cliente.
+<p align="center">
+  <b>Decision priority:</b> SEO → performance → accessibility → aesthetics
+</p>
 
 ---
 
-## Arquitetura
+<h2 id="about">📌 About</h2>
+
+**baseCO** is a **copyable template** — a single Astro app at the repo root, duplicated per project or client, with quality pipelines already wired in.
+
+| Principle                       | Description                                                      |
+| ------------------------------- | ---------------------------------------------------------------- |
+| **Copyable template**           | One repository per client — duplicate and customize              |
+| **Content × visual separation** | Copy in Content Collections (Zod); styling via CSS hooks         |
+| **Progressive enhancement**     | Works without JS; islands only when needed                       |
+| **Zero regression**             | Every delivery runs through `bun run quality`                    |
+| **AI-ready**                    | `AGENTS.md` + `docs/guidelines/` for consistency across projects |
+
+This README documents **how the base enforces technical quality** — not layout showcases, routes, APIs, or UI design.
+
+---
+
+<h2 id="quality-gates">🎯 Quality Gates</h2>
+
+Mandatory targets for every project built from this base:
+
+| Gate                      | Target                   | Tool                     |
+| ------------------------- | ------------------------ | ------------------------ |
+| Lighthouse Performance    | ≥ 95                     | Lighthouse CI            |
+| Lighthouse Accessibility  | ≥ 95                     | Lighthouse CI + axe-core |
+| Lighthouse Best Practices | ≥ 95                     | Lighthouse CI            |
+| Lighthouse SEO            | ≥ 95                     | Lighthouse CI + e2e      |
+| LCP (lab)                 | ≤ 1.8s                   | Lighthouse CI            |
+| CLS                       | ≤ 0.02                   | Lighthouse CI            |
+| INP                       | ≤ 150ms                  | Budget + minimal islands |
+| axe-core (e2e)            | 0 WCAG 2.2 AA violations | Playwright               |
+| pa11y-ci                  | 0 errors                 | post-build               |
+| ESLint + jsx-a11y         | 0 errors                 | pre-commit + CI          |
+| astro check               | 0 errors                 | CI                       |
+
+Unified pipeline:
+
+```bash
+bun run quality   # lint + check + build + e2e + a11y + lighthouse
+```
+
+CI: [`.github/workflows/quality.yml`](./.github/workflows/quality.yml) (GitHub Actions + Bun).
+
+---
+
+<h2 id="seo">🔍 SEO</h2>
+
+Ready for **local SEO** and indexing:
+
+- Dynamic **JSON-LD** `LocalBusiness` (`src/seo/LocalBusinessJsonLd.astro`)
+- **Meta tags** in `Layout.astro` — `title`, `description`, `canonical`, Open Graph, Twitter Card
+- **`robots.txt`** + automatic **`sitemap.xml`** (`@astrojs/sitemap`)
+- Raster **OG image** 1200×630 (`public/og-default.jpg`)
+- **Automatic route discovery** — new static pages are picked up by tests and Lighthouse without manual config
+
+Automated checks in `e2e/seo/` (meta tags, canonical, JSON-LD, `robots.txt`, 4xx/5xx smoke).
+
+---
+
+<h2 id="performance">⚡ Performance</h2>
+
+**Core Web Vitals** optimizations and guardrails:
+
+- **Fully static** build (`output: 'static'`) + `compressHTML`
+- LCP image with `loading="eager"`, `fetchpriority="high"`, `astro:assets` + Sharp (WebP)
+- **`LazySection`** for below-the-fold content
+- **Islands** on demand (`client:media` for mobile menu — no JS on desktop)
+- **Performance budget** in `testing/lighthouse-budget.json` (JS ≤ 80 KB gzip, etc.)
+- **Lighthouse CI** — 3 runs, assertions on every route in `dist/`
+
+---
+
+<h2 id="accessibility">♿ Accessibility</h2>
+
+Target: **WCAG 2.2 Level AA**, enforced in CI.
+
+| Feature        | Implementation                                           |
+| -------------- | -------------------------------------------------------- |
+| Skip link      | `SkipLink.astro` → `#main-content`                       |
+| Landmarks      | Semantic `header`, `nav`, `main`, `footer`               |
+| Mobile menu    | `aria-expanded`, focus trap, Escape                      |
+| `aria-current` | Hash-based anchor navigation                             |
+| Focus visible  | `src/styles/a11y.css` (`:focus-visible`)                 |
+| Reduced motion | `prefers-reduced-motion` in global CSS                   |
+| Forms          | Labels, `aria-required`, focus order tested              |
+| Primitives     | `Button`, `Dialog` (native `<dialog>`), `VisuallyHidden` |
+
+Tools: **eslint-plugin-jsx-a11y**, **@axe-core/playwright**, **pa11y-ci**, keyboard tests in `e2e/a11y/keyboard-nav.spec.ts`.
+
+---
+
+<h2 id="testing">🧪 Testing</h2>
+
+E2E suite with **automatic route discovery** (`testing/discover-routes.ts`):
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  Decap CMS (Admin Web Interface)            │
-│  Acessível via `/admin` · Grava edições no repositório git  │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ Edições locais / Push Git
-┌──────────────────────────▼──────────────────────────────────┐
-│            Astro 5 + TypeScript + Tailwind CSS              │
-│  Content Collections (Zod) · SSR/Static Compilação (Sharp)  │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-          ┌────────────────┴────────────────┐
-          ▼                                 ▼
-┌──────────────────────────┐      ┌──────────────────────────┐
-│   Acessibilidade & SEO   │      │  Design System Externo   │
-│  Semantic HTML · JSON-LD │      │  Hooks CSS · CSS Custom  │
-│  Aria & Skip Link (WCAG) │      │  Custom Tailwind Tokens  │
-└──────────────────────────┘      └──────────────────────────┘
+e2e/
+├── a11y/       # axe-core on all routes + keyboard
+├── seo/        # meta tags, JSON-LD, robots.txt
+├── flows/      # anchor navigation, aria-current
+├── visual/     # visual regression (chromium)
+└── helpers/    # axe-setup, seo-assertions
 ```
 
-**Decisões de design:**
-- **Estático por Padrão** — Compilação 100% estática (`output: 'static'`) com compressão nativa de HTML e otimização de imagens LCP via `Sharp` para carregamento ultra-rápido.
-- **Template copiável** — Um repositório por cliente; duplique este boilerplate e customize.
-- **Separação de Conteúdo e Visual** — Textos e contatos residem puramente em coleções locais JSON, permitindo que redatores atualizem o site sem mexer em arquivos `.astro` ou regras CSS.
+| Command              | Purpose                       |
+| -------------------- | ----------------------------- |
+| `bun run test:e2e`   | Playwright (desktop + mobile) |
+| `bun run a11y`       | pa11y-ci post-build           |
+| `bun run lighthouse` | Lighthouse CI                 |
+| `bun run lint`       | ESLint + jsx-a11y             |
+| `bun run check`      | astro check (types)           |
+
+**Pre-commit:** Husky + lint-staged (ESLint + Prettier on staged files).
+
+Adding a static page under `src/pages/` automatically extends a11y, SEO, Lighthouse, and pa11y coverage.
 
 ---
 
-## Stack
+<h2 id="technologies">💻 Stack</h2>
 
-| Camada | Tecnologias |
-|--------|-------------|
-| **Core Framework** | Astro 5.1.x |
-| **Estilização** | Tailwind CSS 3.4.x |
-| **Linguagem** | TypeScript / Javascript ES6+ |
-| **Otimização de Mídia** | Sharp 0.33.x |
-| **Gerenciador de Pacotes** | Bun 1.3.x (compatível com npm/yarn/pnpm) |
-| **CMS** | Decap CMS 3.x (distribuição estática via CDN) |
-| **Validação de Conteúdo** | Zod (Astro Content Collections Schema) |
-| **Monorepo** | Não — template único copiável por cliente |
-| **Testes E2E** | Playwright + axe-core |
-| **Lint** | ESLint 9 + eslint-plugin-astro + jsx-a11y |
+| Layer               | Technologies                                                                                              |
+| ------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Framework**       | [Astro 5](https://astro.build/) (static)                                                                  |
+| **Language**        | TypeScript                                                                                                |
+| **Styling**         | Tailwind CSS 3                                                                                            |
+| **Images**          | Sharp (`astro:assets`)                                                                                    |
+| **Content**         | Content Collections + [Zod](https://zod.dev/)                                                             |
+| **CMS**             | [Decap CMS](https://decapcms.org/) (`/admin`)                                                             |
+| **Package manager** | [Bun](https://bun.sh/)                                                                                    |
+| **E2E**             | [Playwright](https://playwright.dev/) + [@axe-core/playwright](https://github.com/dequelabs/axe-core-npm) |
+| **Performance**     | [@lhci/cli](https://github.com/GoogleChrome/lighthouse-ci)                                                |
+| **A11y scan**       | [pa11y-ci](https://github.com/pa11y/pa11y-ci)                                                             |
+| **Lint**            | ESLint 9 + eslint-plugin-astro + jsx-a11y                                                                 |
+| **CI**              | GitHub Actions                                                                                            |
 
 ---
 
-## Estrutura do repositório (template copiável)
+<h2 id="structure">📁 Structure</h2>
 
 ```
-seo-base/                       # copiar este repo para cada cliente
+baseCO/                     # copy for each new product or client
 ├── src/
-│   ├── components/             # Header, Hero, Features, primitives/, islands/
-│   ├── seo/                    # LocalBusinessJsonLd, types
-│   ├── layouts/                # Layout.astro
-│   ├── pages/                  # Rotas Astro
-│   ├── content/                # JSON + Zod (Decap CMS)
-│   ├── styles/                 # global.css, a11y.css
-│   └── assets/                 # Imagens (astro:assets)
-├── e2e/                        # Playwright + helpers axe/teclado
-├── public/                     # admin/, og-default.jpg, favicon
-├── scripts/                    # lighthouse, validate-a11y
-├── testing/                    # lighthouse-budget.json
-├── docs/guidelines/            # Padrões para IA e devs
-├── astro.config.mjs
-├── playwright.config.ts
-└── package.json
+│   ├── components/         # sections + primitives/ + islands/
+│   ├── seo/                # JSON-LD, types
+│   ├── content/            # Zod-validated JSON
+│   ├── layouts/            # Layout.astro (head, SEO)
+│   └── pages/              # static routes
+├── e2e/                    # Playwright + quality helpers
+├── scripts/                # lighthouse, validate-a11y
+├── testing/                # discover-routes, lighthouse-budget
+├── docs/guidelines/        # standards (performance, a11y, SEO…)
+├── AGENTS.md               # AI entry point
+└── package.json            # quality scripts
 ```
 
 ---
 
-## Como rodar localmente
+<h2 id="started">🚀 Getting Started</h2>
 
-### Pré-requisitos
+<h3>Clone</h3>
 
-- Node.js 18+ ou **Bun** (Recomendado)
+```bash
+git clone https://github.com/MarlonVictor/baseCO.git
+cd baseCO
+```
 
-### Instalação das dependências
+<h3>Install</h3>
 
 ```bash
 bun install
-# ou se preferir npm:
-npm install
+# or: npm install
 ```
 
-### Executar servidor de desenvolvimento
+<h3>Development</h3>
 
 ```bash
 bun run dev
 ```
 
-Acesse o site em [http://localhost:4321](http://localhost:4321).
+Open [http://localhost:4321](http://localhost:4321) · CMS at [http://localhost:4321/admin](http://localhost:4321/admin).
 
-Para acessar o painel local do CMS, acesse [http://localhost:4321/admin](http://localhost:4321/admin).
-
-### Compilar, testar e validar
+<h3>Run quality checks</h3>
 
 ```bash
-bun run build       # build → dist/
-bun run lint        # ESLint
-bun run test:e2e    # Playwright + axe-core
-bun run lighthouse  # Lighthouse CI (≥ 95 nas 4 categorias)
-bun run a11y        # pa11y-ci pós-build
-bun run quality     # lint + build + e2e + a11y + lighthouse
-bun run preview     # servir dist/
+bun run quality
 ```
 
-O build compila o site em `dist/`.
+<h3>Production build</h3>
 
----
-
-## Variáveis de ambiente e CMS
-
-O painel de controle do Decap CMS por padrão utiliza o `git-gateway`, o qual integra nativamente com serviços como Netlify. 
-
-Caso queira hospedar fora da Netlify, configure o backend no arquivo `public/admin/config.yml` para utilizar outros gateways compatíveis ou autenticação direta com o GitHub:
-
-```yaml
-backend:
-  name: github
-  repo: seu-usuario/seu-repositorio
-  branch: main
+```bash
+bun run build    # output → dist/
+bun run preview  # serve dist/ locally
 ```
 
----
+<h3>New project from this base</h3>
 
-## Componentes da aplicação
-
-| Componente | Função e Localização |
-|------------|----------------------|
-| `Layout.astro` | Gerencia o `<head>` global, metatags de SEO, Twitter, OpenGraph e Skip Link. |
-| `LocalBusinessJsonLd.astro` | Converte propriedades de endereço, geo e contato em um script de dados estruturados JSON-LD. |
-| `Header.astro` | Barra de navegação com suporte a menu mobile responsivo via tags ARIA acessíveis. |
-| `Hero.astro` | Seção principal acima da dobra, exibindo chamada e CTA otimizado com imagens LCP ágeis. |
-| `Features.astro` | Grid de diferencias baseado em colunas responsivas, renderizando conteúdo da coleção JSON. |
-| `Testimonials.astro` | Seção de depoimentos de clientes marcados semânticamente com tags de citação acessíveis. |
-| `Contact.astro` | Formulário de contato acessível integrado a blocos de informações físicas como WhatsApp e endereço. |
-| `Footer.astro` | Rodapé com links de navegação, direitos autorais e metadados legais. |
+1. Duplicate the repository (GitHub “Use this template” or local copy)
+2. Follow [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md)
+3. Run `bun run quality` before delivery
 
 ---
 
-## Status do projeto
+<h2 id="docs">📚 Documentation</h2>
 
-**Boilerplate pronto:** template copiável com quality gates (Playwright, Lighthouse, pa11y), guidelines para IA e componentes otimizados.
-
-Para novo cliente: duplique o repositório e siga [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md).
+| Resource                                                                                 | Content                                             |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| [`AGENTS.md`](./AGENTS.md)                                                               | AI entry point — stack, goals, conventions          |
+| [`docs/guidelines/`](./docs/guidelines/)                                                 | Standards by area (performance, a11y, SEO, testing) |
+| [`docs/guidelines/70-new-page-component.md`](./docs/guidelines/70-new-page-component.md) | Checklist for new pages/components                  |
+| [`docs/NEW-LANDING-GUIDE.md`](./docs/NEW-LANDING-GUIDE.md)                               | Step-by-step for a new client                       |
+| [`docs/PLANO-BOILERPLATE-CORPORATIVO.md`](./docs/PLANO-BOILERPLATE-CORPORATIVO.md)       | Technical roadmap and phases                        |
+| [`docs/GUIA-DOS-ARQUIVOS.md`](./docs/GUIA-DOS-ARQUIVOS.md)                               | Documentation index                                 |
+| [`docs/templates/`](./docs/templates/)                                                   | Copyable templates (components, pages, tests)       |
 
 ---
 
-## Licença
+<h2 id="deploy">🌐 Deploy</h2>
 
-Uso interno para projetos de desenvolvimento e freelancers. Distribuição restrita sob critérios do autor.
+**Netlify**, **Cloudflare Pages**, and **Vercel** — cache headers and optional RUM snippet:
+
+→ [`docs/DEPLOY.md`](./docs/DEPLOY.md)
+
+---
+
+<h2 id="license">📃 License</h2>
+
+Internal use for development and freelance projects. Restricted distribution at the author's discretion.

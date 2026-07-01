@@ -3,7 +3,6 @@
     "collect": {
       "staticDistDir": "./dist",
       "numberOfRuns": 3,
-      "url": ["http://localhost/index.html"],
       "settings": {
         "preset": "desktop",
         "budgets": "./testing/lighthouse-budget.json"

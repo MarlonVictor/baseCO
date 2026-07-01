@@ -1,0 +1,37 @@
+import { test, expect } from '@playwright/test';
+import { assertBaseSeo, assertNoFailedResources } from '../helpers/seo-assertions';
+
+/**
+ * Substitua:
+ *  - NomeDaPagina pelo nome da rota
+ *  - '/caminho' pela URL da página
+ *  - title / canonical conforme o conteúdo real do cliente
+ */
+test.describe('SEO — NomeDaPagina', () => {
+  const pagePath = '/caminho';
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(pagePath);
+  });
+
+  test('meta-tags e canonical', async ({ page }) => {
+    await assertBaseSeo(page, {
+      title: /Título esperado/,
+      canonical: /exemplo\.com\.br/,
+    });
+  });
+
+  test('sem recursos 4xx/5xx', async ({ page }) => {
+    await assertNoFailedResources(page, pagePath);
+  });
+
+  test('JSON-LD quando aplicável', async ({ page }) => {
+    const jsonLd = page.locator('script[type="application/ld+json"]');
+    await expect(jsonLd).toHaveCount(1);
+
+    const data = JSON.parse((await jsonLd.textContent()) ?? '{}');
+    expect(data['@context']).toBe('https://schema.org');
+    // Ajuste @type e campos conforme a página
+    expect(data['@type']).toBe('LocalBusiness');
+  });
+});

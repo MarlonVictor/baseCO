@@ -1,0 +1,56 @@
+---
+/**
+ * NomeDaPagina — [descrição curta da rota]
+ * ----------------------------------------
+ * Rota: /caminho-da-pagina
+ *
+ * SEO: title/description únicos · canonical via Layout · JSON-LD se aplicável
+ * A11y: um h1 · main#main-content · landmarks Header/main/Footer
+ */
+
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+// import type { LocalBusinessSchema } from '~/seo/types';
+
+// --- Conteúdo (Content Collections) ---
+// const items = await getCollection('homepage');
+// const home = items.find((e) => e.id === 'home') ?? items[0];
+
+// --- SEO da página ---
+const pageTitle = 'Título único — Nome do Cliente';
+const pageDescription =
+  'Descrição única (~150–160 caracteres) com proposta de valor e localização.';
+
+// Opcional: JSON-LD LocalBusiness (landing principal)
+// const localBusiness: LocalBusinessSchema = { ... };
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  siteName="Nome do Cliente"
+  themeColor="#0f172a"
+>
+  <Header />
+
+  <main id="main-content" role="main" class="flex-1" tabindex="-1">
+    <h1 class="page__title">Título visível da página</h1>
+
+    <!-- Seções: componentes de src/components/ -->
+    <slot />
+  </main>
+
+  <Footer />
+</Layout>
+
+<!--
+  CHECKLIST (remover após implementar):
+  - [ ] title + description únicos
+  - [ ] Um h1
+  - [ ] main#main-content
+  - [ ] Conteúdo via Content Collections
+  - [ ] bun run quality passa (rota descoberta automaticamente nos testes)
+-->
