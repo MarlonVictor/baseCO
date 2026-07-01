@@ -5,6 +5,7 @@
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",
+        "chromeFlags": "--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage",
         "budgets": "./testing/lighthouse-budget.json"
       }
     },
